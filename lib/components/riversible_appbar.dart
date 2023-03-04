@@ -1,14 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/svg.dart';
 
 import '../constant/color.dart';
+import '../constant/svg.dart';
 
-Padding riversibleAppbar(
-  title,
-  iconVisible,
-  context,
-) {
+Padding riversibleAppbar(title, iconVisible, context, top) {
   return Padding(
-    padding: const EdgeInsets.only(top: 40.0, left: 20, right: 20),
+    padding: EdgeInsets.only(top: top),
     child: Wrap(
       direction: Axis.horizontal,
       runAlignment: WrapAlignment.center,
@@ -37,6 +35,18 @@ Padding riversibleAppbar(
         SizedBox(
           width: 300,
           child: ListTile(
+            leading: Padding(
+              padding: const EdgeInsets.only(
+                left: 20.0,
+              ),
+              child: SizedBox(
+                width: 30,
+                child: SvgPicture.string(
+                  AppSvg.buradayimLogo,
+                  color: AppColor.white,
+                ),
+              ),
+            ),
             minLeadingWidth: 10,
             contentPadding: EdgeInsets.zero,
             trailing: iconVisible == true
@@ -54,15 +64,12 @@ Padding riversibleAppbar(
                 Radius.circular(25),
               ),
             ),
-            title: Padding(
-              padding: const EdgeInsets.only(left: 20.0),
-              child: Text(
-                title,
-                style: const TextStyle(
-                    fontFamily: 'Gilroy-ExtraBold',
-                    color: AppColor.white,
-                    fontSize: 20),
-              ),
+            title: Text(
+              title,
+              style: const TextStyle(
+                  fontFamily: 'Gilroy-ExtraBold',
+                  color: AppColor.white,
+                  fontSize: 20),
             ),
           ),
         ),

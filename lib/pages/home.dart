@@ -20,82 +20,96 @@ class _HomeState extends State<Home> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: AppColor.white,
-      body: Column(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        crossAxisAlignment: CrossAxisAlignment.center,
+      body: Stack(
         children: [
-          appbar(),
+          Positioned(
+            bottom: -100,
+            right: -170,
+            child: SvgPicture.string(
+              AppSvg.buradayimLogo,
+              color: AppColor.purple.withOpacity(0.2),
+              height: 514,
+            ),
+          ),
           Column(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
-              Center(
-                child: InkWell(
-                  splashColor: AppColor.transp,
-                  highlightColor: AppColor.transp,
-                  onTap: () {
-                    setState(() {
-                      isTap = !isTap;
-                    });
-                  },
-                  child: AnimatedContainer(
-                    curve: Curves.fastOutSlowIn,
-                    duration: const Duration(milliseconds: 200),
-                    height: 200,
-                    width: 200,
-                    decoration: BoxDecoration(
-                        shape: BoxShape.circle,
-                        color: AppColor.purple,
-                        boxShadow: [
-                          BoxShadow(
-                              offset: Offset(0, isTap ? 0 : 10),
-                              color: AppColor.black.withOpacity(0.5),
-                              spreadRadius: 0,
-                              blurRadius: isTap ? 0 : 50)
-                        ]),
-                    child: Center(child: SvgPicture.string(AppSvg.send)),
+              appbar(context),
+              Column(
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: [
+                  Center(
+                    child: InkWell(
+                      splashColor: AppColor.transp,
+                      highlightColor: AppColor.transp,
+                      onTap: () {
+                        setState(() {
+                          isTap = !isTap;
+                        });
+                      },
+                      child: AnimatedContainer(
+                        curve: Curves.fastOutSlowIn,
+                        duration: const Duration(milliseconds: 200),
+                        height: 200,
+                        width: 200,
+                        decoration: BoxDecoration(
+                            shape: BoxShape.circle,
+                            color: AppColor.purple,
+                            boxShadow: [
+                              BoxShadow(
+                                  offset: Offset(0, isTap ? 0 : 10),
+                                  color: AppColor.black.withOpacity(0.3),
+                                  spreadRadius: 0,
+                                  blurRadius: isTap ? 0 : 50)
+                            ]),
+                        child: Center(child: SvgPicture.string(AppSvg.send)),
+                      ),
+                    ),
                   ),
+                  const SizedBox(
+                    height: 50,
+                  ),
+                  const Text(
+                    'Konumu Gönder',
+                    style:
+                        TextStyle(fontSize: 30, fontFamily: 'Gilroy-ExtraBold'),
+                  ),
+                  const Text(
+                    'Konumunu göndermek için yukarıda ki\nbutona tıkla.',
+                    textAlign: TextAlign.center,
+                    style: TextStyle(
+                        fontSize: 16,
+                        fontFamily: 'Gilroy-Light',
+                        color: AppColor.grey),
+                  ),
+                ],
+              ),
+              Padding(
+                padding: const EdgeInsets.symmetric(vertical: 20.0),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                  children: [
+                    button(152.0, 'Ayarlar', AppSvg.settings, () {
+                      Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            // ignore: prefer_const_constructors
+                            builder: (context) => Home(),
+                          ));
+                    }),
+                    button(218.0, 'Son Depremler', AppSvg.pulse, () {
+                      Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => const Earthquake(),
+                          ));
+                    }),
+                  ],
                 ),
-              ),
-              const SizedBox(
-                height: 30,
-              ),
-              const Text(
-                'Konumumu Gönder',
-                style: TextStyle(fontSize: 30, fontFamily: 'Gilroy-ExtraBold'),
-              ),
-              const Text(
-                'Konumunu göndermek için yukarıda ki\nbutona tıkla.',
-                textAlign: TextAlign.center,
-                style: TextStyle(
-                    fontSize: 16,
-                    fontFamily: 'Gilroy-Light',
-                    color: AppColor.grey),
-              ),
+              )
             ],
           ),
-          Padding(
-            padding: const EdgeInsets.symmetric(vertical: 20.0),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-              children: [
-                button(152.0, 'Ayarlar', AppSvg.settings, () {
-                  Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        // ignore: prefer_const_constructors
-                        builder: (context) => Home(),
-                      ));
-                }),
-                button(218.0, 'Son Depremler', AppSvg.pulse, () {
-                  Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) => const Earthquake(),
-                      ));
-                }),
-              ],
-            ),
-          )
         ],
       ),
     );

@@ -3,15 +3,22 @@ import 'package:flutter_svg/svg.dart';
 
 import '../constant/color.dart';
 import '../constant/svg.dart';
+import '../pages/number_add.dart';
 
-Padding appbar() {
+Padding appbar(context) {
   return Padding(
     padding: const EdgeInsets.only(top: 40.0, left: 20, right: 20),
     child: ListTile(
       minLeadingWidth: 10,
       contentPadding: EdgeInsets.zero,
       trailing: IconButton(
-          onPressed: () {},
+          onPressed: () {
+            Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => NumberAdd(),
+                ));
+          },
           icon: const Icon(
             Icons.add_circle_rounded,
             size: 40,

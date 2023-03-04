@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'dart:developer';
 
 import 'package:http/http.dart' as http;
 
@@ -8,7 +9,7 @@ class EarthquakeService {
   Future<List<EarthquakeModel>> fetchData() async {
     final response = await http
         .get(Uri.parse('https://api.berkealp.net/kandilli/index.php?all'));
-
+    log('data alındı');
     if (response.statusCode == 200) {
       final data = await json.decode(response.body);
       List<EarthquakeModel> results = [];

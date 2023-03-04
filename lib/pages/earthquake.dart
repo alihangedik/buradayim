@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:io';
 
 import 'package:buradayim/components/date_format.dart';
 import 'package:buradayim/constant/color.dart';
@@ -8,6 +9,7 @@ import 'package:buradayim/service/earthquake_service.dart';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
+import 'package:internet_connection_checker/internet_connection_checker.dart';
 
 import '../components/riversible_appbar.dart';
 
@@ -20,7 +22,7 @@ class Earthquake extends StatefulWidget {
 
 class _EarthquakeState extends State<Earthquake> {
   late Future<List<EarthquakeModel>> model;
-  List data = [];
+
   @override
   void initState() {
     super.initState();
@@ -32,12 +34,24 @@ class _EarthquakeState extends State<Earthquake> {
     setState(() {});
   }
 
+  bool internet = false;
+
+  Future<bool> connectionChecker() async {
+    bool result = await InternetConnectionChecker().hasConnection;
+
+    if (result == true) {
+      return true;
+    } else {
+      return false;
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       body: Column(
         children: [
-          riversibleAppbar('Son Depremler', false, context),
+          riversibleAppbar('Son Depremler', false, context, 40.0),
           infoText(),
           futureBuilder(context)
         ],
@@ -65,9 +79,12 @@ class _EarthquakeState extends State<Earthquake> {
               var data = snapshot.data!;
 
               return RefreshIndicator(
-                onRefresh: _refresh,
-                child: earthquakeList(data),
-              );
+                  onRefresh: _refresh,
+                  child: data.isEmpty
+                      ? Center(
+                          child: Text('hata'),
+                        )
+                      : earthquakeList(data));
             }
             return const Center(child: CircularProgressIndicator());
           }),
@@ -110,12 +127,16 @@ class _EarthquakeState extends State<Earthquake> {
                               Padding(
                                 padding: const EdgeInsets.only(top: 8.0),
                                 child: SizedBox(
+                                  width: 220,
                                   child: Text(
-                                    data[index].region.toString().toUpperCase(),
+                                    data[index]
+                                        .region
+                                        .toString()
+                                        .replaceAll('-', ' , '),
                                     style: const TextStyle(
                                         fontFamily: 'Gilroy-ExtraBold',
                                         color: AppColor.white,
-                                        fontSize: 16),
+                                        fontSize: 20),
                                   ),
                                 ),
                               ),
@@ -177,7 +198,10 @@ class _EarthquakeState extends State<Earthquake> {
       padding: const EdgeInsets.symmetric(vertical: 6.0),
       child: Row(
         children: [
-          SvgPicture.string(icon),
+          SizedBox(
+            width: 20,
+            child: SvgPicture.string(icon),
+          ),
           Padding(
             padding: const EdgeInsets.only(left: 12.0),
             child: Text(
