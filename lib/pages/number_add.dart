@@ -3,6 +3,7 @@ import 'package:buradayim/constant/color.dart';
 import 'package:buradayim/constant/svg.dart';
 
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_svg/svg.dart';
 
 class NumberAdd extends StatefulWidget {
@@ -23,6 +24,7 @@ class _NumberAddState extends State<NumberAdd> {
   }
 
   List phoneList = [];
+  List nameList = [];
   bool isTap = false;
   @override
   Widget build(BuildContext context) {
@@ -68,26 +70,106 @@ class _NumberAddState extends State<NumberAdd> {
                   ),
                 ),
                 tfWrap(context, Icons.person, 'Telefon Sahibinin Adı', tfName,
-                    TextInputType.text),
+                    TextInputType.text, []),
                 const SizedBox(
                   height: 10,
                 ),
                 tfWrap(context, Icons.phone, 'Telefon Numarası', tfPhone,
-                    TextInputType.phone),
-                FilledButton(
-                    onPressed: () {
-                      if (phoneList.length < 3) {
+                    TextInputType.phone, [
+                  FilteringTextInputFormatter.digitsOnly,
+                  LengthLimitingTextInputFormatter(11),
+                ]),
+                Container(
+                  width: double.infinity,
+                  alignment: Alignment.centerRight,
+                  child: InkWell(
+                    splashColor: AppColor.transp,
+                    highlightColor: AppColor.transp,
+                    onTap: () {
+                      if (phoneList.length < 3 &&
+                          tfName.text.isNotEmpty &&
+                          tfName.text != '' &&
+                          !phoneList.contains(tfPhone.text)) {
                         phoneList.add(tfPhone.text);
                         setState(() {});
                       }
+
+                      if (nameList.length < 3 &&
+                          tfPhone.text.isNotEmpty &&
+                          tfPhone.text.length < 12 &&
+                          !nameList.contains(tfName.text)) {
+                        nameList.add(tfName.text);
+                        setState(() {});
+                      }
                     },
-                    child: const Text('ekle')),
+                    child: Padding(
+                      padding: const EdgeInsets.symmetric(vertical: 10.0),
+                      child: Container(
+                        decoration: BoxDecoration(
+                            color: AppColor.purple,
+                            borderRadius: BorderRadius.circular(25)),
+                        width: 114,
+                        height: 60,
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                          children: const [
+                            Text(
+                              'Ekle',
+                              style: TextStyle(
+                                  fontFamily: 'Gilroy-ExtraBold',
+                                  fontSize: 20,
+                                  color: AppColor.white),
+                            ),
+                            Icon(
+                              Icons.add_circle,
+                              size: 24,
+                              color: AppColor.white,
+                            )
+                          ],
+                        ),
+                      ),
+                    ),
+                  ),
+                ),
                 SizedBox(
-                  height: 200,
+                  height: MediaQuery.of(context).size.height / 2.3,
                   child: ListView.builder(
+                    physics: const NeverScrollableScrollPhysics(),
                     itemCount: phoneList.length,
                     itemBuilder: (context, index) {
-                      return Text(phoneList[index].toString());
+                      return Padding(
+                        padding: const EdgeInsets.symmetric(vertical: 10),
+                        child: ListTile(
+                          shape: const RoundedRectangleBorder(
+                              borderRadius:
+                                  BorderRadius.all(Radius.circular(25))),
+                          contentPadding: const EdgeInsets.symmetric(
+                              vertical: 10, horizontal: 33),
+                          trailing: IconButton(
+                              onPressed: () {
+                                setState(() {
+                                  phoneList.remove(phoneList[index]);
+                                  nameList.remove(nameList[index]);
+                                });
+                              },
+                              icon: SvgPicture.string(AppSvg.trash)),
+                          tileColor: AppColor.purple,
+                          title: Text(
+                            nameList[index],
+                            style: const TextStyle(
+                                fontFamily: 'Gilroy-ExtraBold',
+                                fontSize: 20,
+                                color: AppColor.white),
+                          ),
+                          subtitle: Text(
+                            '+9${phoneList[index]}',
+                            style: const TextStyle(
+                                fontFamily: 'Gilroy-ExtraBold',
+                                fontSize: 20,
+                                color: AppColor.white),
+                          ),
+                        ),
+                      );
                     },
                   ),
                 )
@@ -99,7 +181,8 @@ class _NumberAddState extends State<NumberAdd> {
     );
   }
 
-  Wrap tfWrap(BuildContext context, icon, title, controller, type) {
+  Wrap tfWrap(BuildContext context, icon, title, controller, type,
+      List<TextInputFormatter> formatter) {
     return Wrap(
       direction: Axis.horizontal,
       runAlignment: WrapAlignment.center,
@@ -126,28 +209,31 @@ class _NumberAddState extends State<NumberAdd> {
           ),
         ),
         Container(
-            height: 60,
-            width: 300,
-            decoration: BoxDecoration(
-                color: AppColor.purple,
-                borderRadius: BorderRadius.circular(25)),
-            child: Padding(
-              padding:
-                  const EdgeInsets.symmetric(vertical: 5.0, horizontal: 20),
-              child: TextField(
-                style: const TextStyle(
-                    color: AppColor.white, fontFamily: 'Gilroy'),
-                keyboardType: type,
-                controller: controller,
-                decoration: InputDecoration(
-                    border: InputBorder.none,
-                    hintText: title,
-                    hintStyle: TextStyle(
-                        fontFamily: 'Gilroy-ExtraBold',
-                        color: AppColor.white.withOpacity(0.5),
-                        fontSize: 20)),
+          height: 60,
+          width: 300,
+          decoration: BoxDecoration(
+              color: AppColor.purple, borderRadius: BorderRadius.circular(25)),
+          child: Padding(
+            padding: const EdgeInsets.symmetric(vertical: 5.0, horizontal: 20),
+            child: TextFormField(
+              style: const TextStyle(
+                  color: AppColor.white,
+                  fontFamily: 'Gilroy-ExtraBold',
+                  fontSize: 20),
+              inputFormatters: formatter,
+              keyboardType: type,
+              controller: controller,
+              decoration: InputDecoration(
+                border: InputBorder.none,
+                hintText: title,
+                hintStyle: TextStyle(
+                    fontFamily: 'Gilroy-ExtraBold',
+                    color: AppColor.white.withOpacity(0.5),
+                    fontSize: 20),
               ),
-            )),
+            ),
+          ),
+        ),
       ],
     );
   }
