@@ -1,7 +1,6 @@
 import 'dart:async';
 
 import 'package:buradayim/constant/svg.dart';
-import 'package:buradayim/pages/earthquake.dart';
 
 import 'package:buradayim/pages/home.dart';
 import 'package:flutter/material.dart';
@@ -21,11 +20,12 @@ class _SplashState extends State<Splash> {
   void initState() {
     super.initState();
     Timer(const Duration(seconds: 5), () {
-      Navigator.push(
+      Navigator.pushAndRemoveUntil(
           context,
           MaterialPageRoute(
-            builder: (context) => const Earthquake(),
-          ));
+            builder: (context) => const Home(),
+          ),
+          (route) => false);
     });
   }
 

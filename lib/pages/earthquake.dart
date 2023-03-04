@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import 'package:buradayim/components/date_format.dart';
 import 'package:buradayim/constant/color.dart';
 import 'package:buradayim/constant/svg.dart';
 import 'package:buradayim/model/earthquake_model.dart';
@@ -108,12 +109,14 @@ class _EarthquakeState extends State<Earthquake> {
                             children: [
                               Padding(
                                 padding: const EdgeInsets.only(top: 8.0),
-                                child: Text(
-                                  data[index].region.toString(),
-                                  style: const TextStyle(
-                                      fontFamily: 'Gilroy-ExtraBold',
-                                      color: AppColor.white,
-                                      fontSize: 20),
+                                child: SizedBox(
+                                  child: Text(
+                                    data[index].region.toString().toUpperCase(),
+                                    style: const TextStyle(
+                                        fontFamily: 'Gilroy-ExtraBold',
+                                        color: AppColor.white,
+                                        fontSize: 16),
+                                  ),
                                 ),
                               ),
                               Padding(
@@ -129,7 +132,7 @@ class _EarthquakeState extends State<Earthquake> {
                                           fontSize: 34),
                                     ),
                                     Padding(
-                                      padding: const EdgeInsets.only(top: 12.0),
+                                      padding: const EdgeInsets.only(top: 14.0),
                                       child: Text(
                                         data[index].magnitudeType.toString(),
                                         style: const TextStyle(
@@ -143,20 +146,21 @@ class _EarthquakeState extends State<Earthquake> {
                               )
                             ],
                           ),
-                          cardInformations(data[index].time, AppSvg.time),
-                          cardInformations(data[index].depth.toString() + ' km',
-                              AppSvg.arrow),
                           cardInformations(
-                              data[index]
-                                      .longitude
+                              TurkishDateFormat.turkishDatewithTime(
+                                  DateTime.parse(data[index]
+                                      .time
                                       .toString()
-                                      .replaceAll('&deg; E', '') +
-                                  ' , ' +
-                                  data[index]
-                                      .latitude
-                                      .toString()
-                                      .replaceAll('&deg; N', ''),
-                              AppSvg.depth),
+                                      .replaceAll('/', '-'))),
+                              AppSvg.time),
+                          cardInformations(
+                            '${data[index].depth} km',
+                            AppSvg.arrow,
+                          ),
+                          cardInformations(
+                            '${data[index].longitude.toString().replaceAll('&deg; E', '').replaceAll('&deg; W', '')} , ${data[index].latitude.toString().replaceAll('&deg; N', '').replaceAll('&deg; S', '')}',
+                            AppSvg.depth,
+                          ),
                         ],
                       ),
                     ],

@@ -2,7 +2,11 @@ import 'package:flutter/material.dart';
 
 import '../constant/color.dart';
 
-Padding riversibleAppbar(title, iconVisible, context) {
+Padding riversibleAppbar(
+  title,
+  iconVisible,
+  context,
+) {
   return Padding(
     padding: const EdgeInsets.only(top: 40.0, left: 20, right: 20),
     child: Wrap(
