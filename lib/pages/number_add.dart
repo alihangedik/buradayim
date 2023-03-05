@@ -7,7 +7,9 @@ import 'package:flutter/services.dart';
 import 'package:flutter_svg/svg.dart';
 
 class NumberAdd extends StatefulWidget {
-  const NumberAdd({super.key});
+  NumberAdd({super.key, required this.phoneList});
+
+  List phoneList = [];
 
   @override
   State<NumberAdd> createState() => _NumberAddState();
@@ -23,7 +25,6 @@ class _NumberAddState extends State<NumberAdd> {
     tfPhone = TextEditingController();
   }
 
-  List phoneList = [];
   List nameList = [];
   bool isTap = false;
   @override
@@ -86,11 +87,11 @@ class _NumberAddState extends State<NumberAdd> {
                     splashColor: AppColor.transp,
                     highlightColor: AppColor.transp,
                     onTap: () {
-                      if (phoneList.length < 3 &&
+                      if (widget.phoneList.length < 3 &&
                           tfName.text.isNotEmpty &&
                           tfName.text != '' &&
-                          !phoneList.contains(tfPhone.text)) {
-                        phoneList.add(tfPhone.text);
+                          !widget.phoneList.contains(tfPhone.text)) {
+                        widget.phoneList.add(tfPhone.text);
                         setState(() {});
                       }
 
@@ -135,7 +136,7 @@ class _NumberAddState extends State<NumberAdd> {
                   height: MediaQuery.of(context).size.height / 2.3,
                   child: ListView.builder(
                     physics: const NeverScrollableScrollPhysics(),
-                    itemCount: phoneList.length,
+                    itemCount: widget.phoneList.length,
                     itemBuilder: (context, index) {
                       return Padding(
                         padding: const EdgeInsets.symmetric(vertical: 10),
@@ -148,7 +149,8 @@ class _NumberAddState extends State<NumberAdd> {
                           trailing: IconButton(
                               onPressed: () {
                                 setState(() {
-                                  phoneList.remove(phoneList[index]);
+                                  widget.phoneList
+                                      .remove(widget.phoneList[index]);
                                   nameList.remove(nameList[index]);
                                 });
                               },
@@ -162,7 +164,7 @@ class _NumberAddState extends State<NumberAdd> {
                                 color: AppColor.white),
                           ),
                           subtitle: Text(
-                            '+9${phoneList[index]}',
+                            '+9${widget.phoneList[index]}',
                             style: const TextStyle(
                                 fontFamily: 'Gilroy-ExtraBold',
                                 fontSize: 20,

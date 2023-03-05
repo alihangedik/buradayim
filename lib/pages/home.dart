@@ -1,11 +1,15 @@
+import 'dart:developer';
+
 import 'package:buradayim/constant/color.dart';
 import 'package:buradayim/constant/svg.dart';
 import 'package:buradayim/pages/earthquake.dart';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
+import 'package:sms_v2/sms.dart';
 
 import '../components/appbar.dart';
+import 'number_add.dart';
 
 class Home extends StatefulWidget {
   const Home({super.key});
@@ -15,6 +19,22 @@ class Home extends StatefulWidget {
 }
 
 class _HomeState extends State<Home> {
+  List phoneList = [];
+
+  void sendSms() async {
+    try {
+      SmsSender sender = SmsSender();
+      String address = '+905300946292';
+      String message = 'Test';
+      SmsMessage smsMessage = SmsMessage(
+          address: address, body: message, id: 1, date: DateTime.now());
+      await sender.sendSms(smsMessage);
+      log('SMS sent successfully!');
+    } catch (e) {
+      log('Failed to send SMS: $e');
+    }
+  }
+
   bool isTap = false;
   @override
   Widget build(BuildContext context) {
@@ -35,7 +55,18 @@ class _HomeState extends State<Home> {
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
-              appbar(context),
+              appbar(
+                context,
+                () {
+                  Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => NumberAdd(
+                          phoneList: phoneList,
+                        ),
+                      ));
+                },
+              ),
               Column(
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
@@ -46,6 +77,7 @@ class _HomeState extends State<Home> {
                       onTap: () {
                         setState(() {
                           isTap = !isTap;
+                          sendSms();
                         });
                       },
                       child: AnimatedContainer(

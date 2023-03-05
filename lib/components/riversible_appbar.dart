@@ -12,7 +12,7 @@ Padding riversibleAppbar(title, iconVisible, context, top) {
       runAlignment: WrapAlignment.center,
       alignment: WrapAlignment.center,
       crossAxisAlignment: WrapCrossAlignment.center,
-      spacing: 5,
+      spacing: 3,
       children: [
         Container(
           height: 60,

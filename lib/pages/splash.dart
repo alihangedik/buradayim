@@ -2,11 +2,11 @@ import 'dart:async';
 
 import 'package:buradayim/constant/svg.dart';
 
-import 'package:buradayim/pages/home.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 
 import '../constant/color.dart';
+import 'home.dart';
 
 class Splash extends StatefulWidget {
   const Splash({super.key});
