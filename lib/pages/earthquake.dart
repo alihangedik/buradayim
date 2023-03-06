@@ -1,14 +1,16 @@
 import 'dart:async';
+import 'dart:developer';
 
 import 'package:buradayim/components/date_format.dart';
 import 'package:buradayim/constant/color.dart';
 import 'package:buradayim/constant/svg.dart';
 import 'package:buradayim/model/earthquake_model.dart';
 import 'package:buradayim/service/earthquake_service.dart';
+import 'package:connectivity/connectivity.dart';
 
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_svg/svg.dart';
-import 'package:internet_connection_checker/internet_connection_checker.dart';
 
 import '../components/riversible_appbar.dart';
 
@@ -20,29 +22,38 @@ class Earthquake extends StatefulWidget {
 }
 
 class _EarthquakeState extends State<Earthquake> {
-  late Future<List<EarthquakeModel>> model;
+  late Future<List<EarthquakeModel>?> model;
+  final Connectivity connectivity = Connectivity();
+  ConnectivityResult connectivityResult = ConnectivityResult.none;
+  late StreamSubscription<ConnectivityResult> streamSubscription;
 
-  @override
+  Future<void> updateStatus(ConnectivityResult result) async {
+    connectivityResult = result;
+    log(result.name.toString());
+    setState(() {});
+  }
+
+  Future<void> initConnectivity() async {
+    late ConnectivityResult result;
+    try {
+      result = await connectivity.checkConnectivity();
+    } on PlatformException catch (e) {
+      print(e.message);
+    }
+    return updateStatus(result);
+  }
+
   void initState() {
     super.initState();
     model = EarthquakeService().fetchData();
+    initConnectivity();
+    streamSubscription =
+        connectivity.onConnectivityChanged.listen(updateStatus);
   }
 
   Future<void> _refresh() async {
     await EarthquakeService().fetchData();
     setState(() {});
-  }
-
-  bool internet = false;
-
-  Future<bool> connectionChecker() async {
-    bool result = await InternetConnectionChecker().hasConnection;
-
-    if (result == true) {
-      return true;
-    } else {
-      return false;
-    }
   }
 
   @override
@@ -74,18 +85,51 @@ class _EarthquakeState extends State<Earthquake> {
       child: FutureBuilder(
           future: model,
           builder: (context, snapshot) {
-            if (snapshot.hasData) {
-              var data = snapshot.data!;
+            if (connectivityResult == ConnectivityResult.mobile ||
+                connectivityResult == ConnectivityResult.wifi) {
+              var data = snapshot.data;
 
               return RefreshIndicator(
-                  onRefresh: _refresh,
-                  child: data.isEmpty
-                      ? Center(
-                          child: Text('hata'),
-                        )
-                      : earthquakeList(data));
+                onRefresh: _refresh,
+                child: data == null
+                    ? const Center(child: Text('Yükleniyor'))
+                    : earthquakeList(data),
+              );
             }
-            return const Center(child: CircularProgressIndicator());
+            return Wrap(
+              runSpacing: 50,
+              runAlignment: WrapAlignment.center,
+              children: [
+                Center(
+                  child: SvgPicture.string(AppSvg.notConnection),
+                ),
+                Column(
+                  children: [
+                    Padding(
+                      padding: const EdgeInsets.symmetric(vertical: 5),
+                      child: const Center(
+                        child: Text(
+                          'İnternet bağlantısı bulunamadı!',
+                          style: TextStyle(
+                              fontFamily: 'Gilroy-ExtraBold', fontSize: 20),
+                        ),
+                      ),
+                    ),
+                    Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 20),
+                      child: const Center(
+                        child: Text(
+                          'Şuan da internete bağlı değilsiniz. Lütfen bağlantınızı kontrol edip tekrar deneyin.',
+                          style: TextStyle(
+                              fontFamily: 'Gilroy-Light', fontSize: 20),
+                          textAlign: TextAlign.center,
+                        ),
+                      ),
+                    ),
+                  ],
+                )
+              ],
+            );
           }),
     );
   }

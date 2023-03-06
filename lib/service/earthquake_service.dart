@@ -6,7 +6,7 @@ import 'package:http/http.dart' as http;
 import '../model/earthquake_model.dart';
 
 class EarthquakeService {
-  Future<List<EarthquakeModel>> fetchData() async {
+  Future<List<EarthquakeModel>?> fetchData() async {
     final response = await http
         .get(Uri.parse('https://api.berkealp.net/kandilli/index.php?all'));
     log('data alındı');

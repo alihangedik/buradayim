@@ -1,12 +1,9 @@
-import 'dart:developer';
-
 import 'package:buradayim/constant/color.dart';
 import 'package:buradayim/constant/svg.dart';
 import 'package:buradayim/pages/earthquake.dart';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
-import 'package:sms_v2/sms.dart';
 
 import '../components/appbar.dart';
 import 'number_add.dart';
@@ -21,19 +18,19 @@ class Home extends StatefulWidget {
 class _HomeState extends State<Home> {
   List phoneList = [];
 
-  void sendSms() async {
-    try {
-      SmsSender sender = SmsSender();
-      String address = '+905300946292';
-      String message = 'Test';
-      SmsMessage smsMessage = SmsMessage(
-          address: address, body: message, id: 1, date: DateTime.now());
-      await sender.sendSms(smsMessage);
-      log('SMS sent successfully!');
-    } catch (e) {
-      log('Failed to send SMS: $e');
-    }
-  }
+  // Future<void> sendSms() async {
+  //   try {
+  //     SmsSender sender = SmsSender();
+  //     String address = '+905300946292';
+  //     String message = 'Test';
+  //     SmsMessage smsMessage = SmsMessage(
+  //         address: address, body: message, id: 1, date: DateTime.now());
+  //     await sender.sendSms(smsMessage);
+  //     log('SMS sent successfully!');
+  //   } catch (e) {
+  //     log('Failed to send SMS: $e');
+  //   }
+  // }
 
   bool isTap = false;
   @override
@@ -74,11 +71,11 @@ class _HomeState extends State<Home> {
                     child: InkWell(
                       splashColor: AppColor.transp,
                       highlightColor: AppColor.transp,
-                      onTap: () {
+                      onTap: () async {
                         setState(() {
                           isTap = !isTap;
-                          sendSms();
                         });
+                        //await sendSms();
                       },
                       child: AnimatedContainer(
                         curve: Curves.fastOutSlowIn,
