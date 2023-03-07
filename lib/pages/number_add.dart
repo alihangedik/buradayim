@@ -18,11 +18,15 @@ class NumberAdd extends StatefulWidget {
 class _NumberAddState extends State<NumberAdd> {
   late TextEditingController tfName;
   late TextEditingController tfPhone;
+  late FocusNode fnName;
+  late FocusNode fnPhone;
   @override
   void initState() {
     super.initState();
     tfName = TextEditingController();
     tfPhone = TextEditingController();
+    fnName = FocusNode();
+    fnPhone = FocusNode();
   }
 
   List nameList = [];
@@ -43,74 +47,84 @@ class _NumberAddState extends State<NumberAdd> {
               height: 514,
             ),
           ),
-          Padding(
-            padding: const EdgeInsets.all(22.0),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.center,
-              children: [
-                riversibleAppbar('Numara Ekle', false, context, 20.0),
-                Padding(
-                  padding: const EdgeInsets.symmetric(vertical: 50),
-                  child: Column(
-                    children: const [
-                      Text(
-                        'Numara eklemek için formu doldurun',
-                        style: TextStyle(
-                            fontSize: 16,
-                            fontFamily: 'Gilroy-Light',
-                            color: AppColor.grey),
-                      ),
-                      Text(
-                        '*En fazla 3 numara ekleyebilirsiniz',
-                        style: TextStyle(
-                            fontSize: 12,
-                            fontFamily: 'Gilroy-Light',
-                            color: AppColor.grey),
-                      ),
-                    ],
-                  ),
+          Column(
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: [
+              riversibleAppbar('Numara Ekle', false, context, 40.0),
+              Padding(
+                padding: const EdgeInsets.symmetric(vertical: 50),
+                child: Column(
+                  children: const [
+                    Text(
+                      'Numara eklemek için formu doldurun',
+                      style: TextStyle(
+                          fontSize: 16,
+                          fontFamily: 'Gilroy-Light',
+                          color: AppColor.grey),
+                    ),
+                    Text(
+                      '*En fazla 3 numara ekleyebilirsiniz',
+                      style: TextStyle(
+                          fontSize: 12,
+                          fontFamily: 'Gilroy-Light',
+                          color: AppColor.grey),
+                    ),
+                  ],
                 ),
-                tfWrap(context, Icons.person, 'Telefon Sahibinin Adı', tfName,
-                    TextInputType.text, []),
-                const SizedBox(
-                  height: 10,
-                ),
-                tfWrap(context, Icons.phone, 'Telefon Numarası', tfPhone,
-                    TextInputType.phone, [
-                  FilteringTextInputFormatter.digitsOnly,
-                  LengthLimitingTextInputFormatter(11),
-                ]),
-                Container(
-                  width: double.infinity,
-                  alignment: Alignment.centerRight,
-                  child: InkWell(
-                    splashColor: AppColor.transp,
-                    highlightColor: AppColor.transp,
-                    onTap: () {
-                      if (widget.phoneList.length < 3 &&
-                          tfName.text.isNotEmpty &&
-                          tfName.text != '' &&
-                          !widget.phoneList.contains(tfPhone.text)) {
-                        widget.phoneList.add(tfPhone.text);
-                        setState(() {});
-                      }
+              ),
+              tfWrap(context, Icons.person, 'Telefon Sahibinin Adı', tfName,
+                  TextInputType.name, [], fnName),
+              const SizedBox(
+                height: 10,
+              ),
+              tfWrap(
+                  context,
+                  Icons.phone,
+                  'Telefon Numarası',
+                  tfPhone,
+                  TextInputType.phone,
+                  [
+                    FilteringTextInputFormatter.digitsOnly,
+                    LengthLimitingTextInputFormatter(11),
+                  ],
+                  fnPhone),
+              Container(
+                width: double.infinity,
+                alignment: Alignment.centerRight,
+                child: InkWell(
+                  splashColor: AppColor.transp,
+                  highlightColor: AppColor.transp,
+                  onTap: () {
+                    if (widget.phoneList.length < 3 &&
+                        tfName.text.isNotEmpty &&
+                        tfName.text != '' &&
+                        !widget.phoneList.contains(tfPhone.text)) {
+                      widget.phoneList.add(tfPhone.text);
+                      setState(() {});
+                    }
 
-                      if (nameList.length < 3 &&
-                          tfPhone.text.isNotEmpty &&
-                          tfPhone.text.length < 12 &&
-                          !nameList.contains(tfName.text)) {
-                        nameList.add(tfName.text);
-                        setState(() {});
-                      }
-                    },
-                    child: Padding(
-                      padding: const EdgeInsets.symmetric(vertical: 10.0),
-                      child: Container(
-                        decoration: BoxDecoration(
-                            color: AppColor.purple,
-                            borderRadius: BorderRadius.circular(25)),
-                        width: 114,
-                        height: 60,
+                    if (nameList.length < 3 &&
+                        tfPhone.text.isNotEmpty &&
+                        tfPhone.text.length < 12 &&
+                        !nameList.contains(tfName.text)) {
+                      nameList.add(tfName.text);
+                    }
+                    tfName.text = '';
+                    tfPhone.text = '';
+                    fnName.unfocus();
+                    fnPhone.unfocus();
+                  },
+                  child: Padding(
+                    padding: const EdgeInsets.symmetric(
+                        vertical: 10.0, horizontal: 15),
+                    child: Container(
+                      decoration: BoxDecoration(
+                          color: AppColor.purple,
+                          borderRadius: BorderRadius.circular(25)),
+                      width: 114,
+                      height: 60,
+                      child: Padding(
+                        padding: const EdgeInsets.all(8.0),
                         child: Row(
                           mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                           children: const [
@@ -132,51 +146,56 @@ class _NumberAddState extends State<NumberAdd> {
                     ),
                   ),
                 ),
-                SizedBox(
-                  height: MediaQuery.of(context).size.height / 2.3,
-                  child: ListView.builder(
-                    physics: const NeverScrollableScrollPhysics(),
-                    itemCount: widget.phoneList.length,
-                    itemBuilder: (context, index) {
-                      return Padding(
-                        padding: const EdgeInsets.symmetric(vertical: 10),
-                        child: ListTile(
-                          shape: const RoundedRectangleBorder(
-                              borderRadius:
-                                  BorderRadius.all(Radius.circular(25))),
-                          contentPadding: const EdgeInsets.symmetric(
-                              vertical: 10, horizontal: 33),
-                          trailing: IconButton(
-                              onPressed: () {
-                                setState(() {
-                                  widget.phoneList
-                                      .remove(widget.phoneList[index]);
-                                  nameList.remove(nameList[index]);
-                                });
-                              },
-                              icon: SvgPicture.string(AppSvg.trash)),
-                          tileColor: AppColor.purple,
-                          title: Text(
-                            nameList[index],
-                            style: const TextStyle(
-                                fontFamily: 'Gilroy-ExtraBold',
-                                fontSize: 20,
-                                color: AppColor.white),
-                          ),
-                          subtitle: Text(
-                            '+9${widget.phoneList[index]}',
-                            style: const TextStyle(
-                                fontFamily: 'Gilroy-ExtraBold',
-                                fontSize: 20,
-                                color: AppColor.white),
-                          ),
+              ),
+              const Text(
+                'Eklenen Numaralar',
+                style: TextStyle(fontFamily: 'Gilroy-Light', fontSize: 20),
+              ),
+              SizedBox(
+                height: MediaQuery.of(context).size.height / 2.3,
+                width: MediaQuery.of(context).size.width / 1.1,
+                child: ListView.builder(
+                  physics: const NeverScrollableScrollPhysics(),
+                  itemCount: widget.phoneList.length,
+                  itemBuilder: (context, index) {
+                    return Padding(
+                      padding: const EdgeInsets.symmetric(vertical: 10),
+                      child: ListTile(
+                        shape: const RoundedRectangleBorder(
+                            borderRadius:
+                                BorderRadius.all(Radius.circular(25))),
+                        contentPadding: const EdgeInsets.symmetric(
+                            vertical: 10, horizontal: 33),
+                        trailing: IconButton(
+                            onPressed: () {
+                              setState(() {
+                                widget.phoneList
+                                    .remove(widget.phoneList[index]);
+                                nameList.remove(nameList[index]);
+                              });
+                            },
+                            icon: SvgPicture.string(AppSvg.trash)),
+                        tileColor: AppColor.purple,
+                        title: Text(
+                          nameList[index],
+                          style: const TextStyle(
+                              fontFamily: 'Gilroy-ExtraBold',
+                              fontSize: 20,
+                              color: AppColor.white),
                         ),
-                      );
-                    },
-                  ),
-                )
-              ],
-            ),
+                        subtitle: Text(
+                          '+9${widget.phoneList[index]}',
+                          style: const TextStyle(
+                              fontFamily: 'Gilroy-ExtraBold',
+                              fontSize: 20,
+                              color: AppColor.white),
+                        ),
+                      ),
+                    );
+                  },
+                ),
+              )
+            ],
           ),
         ],
       ),
@@ -184,7 +203,7 @@ class _NumberAddState extends State<NumberAdd> {
   }
 
   Wrap tfWrap(BuildContext context, icon, title, controller, type,
-      List<TextInputFormatter> formatter) {
+      List<TextInputFormatter> formatter, focusNode) {
     return Wrap(
       direction: Axis.horizontal,
       runAlignment: WrapAlignment.center,
@@ -218,6 +237,7 @@ class _NumberAddState extends State<NumberAdd> {
           child: Padding(
             padding: const EdgeInsets.symmetric(vertical: 5.0, horizontal: 20),
             child: TextFormField(
+              focusNode: focusNode,
               style: const TextStyle(
                   color: AppColor.white,
                   fontFamily: 'Gilroy-ExtraBold',

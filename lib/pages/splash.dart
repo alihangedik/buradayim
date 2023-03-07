@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:buradayim/constant/svg.dart';
 
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_svg/svg.dart';
 
 import '../constant/color.dart';
@@ -27,6 +28,10 @@ class _SplashState extends State<Splash> {
           ),
           (route) => false);
     });
+
+    SystemChrome.setPreferredOrientations([
+      DeviceOrientation.portraitUp,
+    ]);
   }
 
   @override

@@ -41,6 +41,9 @@ dependencies:
   connectivity: ^3.0.6
   internet_connection_checker: ^1.0.0+1
   connectivity_plus: ^3.0.3
+  url_launcher: ^6.1.10
+  background_sms: ^0.0.4
+  permission_handler: ^10.2.0
 
 dev_dependencies:
   flutter_test:

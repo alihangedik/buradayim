@@ -5,19 +5,21 @@ import '../constant/color.dart';
 import '../constant/svg.dart';
 import '../pages/number_add.dart';
 
-Padding appbar(context, onPressed) {
+Padding appbar(context, onPressed, bool isIcon) {
   return Padding(
     padding: const EdgeInsets.only(top: 40.0, left: 20, right: 20),
     child: ListTile(
       minLeadingWidth: 10,
       contentPadding: EdgeInsets.zero,
-      trailing: IconButton(
-          onPressed: onPressed,
-          icon: const Icon(
-            Icons.add_circle_rounded,
-            size: 40,
-            color: AppColor.white,
-          )),
+      trailing: isIcon
+          ? IconButton(
+              onPressed: onPressed,
+              icon: const Icon(
+                Icons.add_circle_rounded,
+                size: 40,
+                color: AppColor.white,
+              ))
+          : SizedBox.shrink(),
       leading: Padding(
         padding: const EdgeInsets.only(left: 20.0),
         child: SizedBox(

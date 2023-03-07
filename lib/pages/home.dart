@@ -1,9 +1,15 @@
+import 'dart:developer';
+
+import 'package:background_sms/background_sms.dart';
 import 'package:buradayim/constant/color.dart';
 import 'package:buradayim/constant/svg.dart';
 import 'package:buradayim/pages/earthquake.dart';
+import 'package:buradayim/pages/success.dart';
 
 import 'package:flutter/material.dart';
+
 import 'package:flutter_svg/svg.dart';
+import 'package:permission_handler/permission_handler.dart';
 
 import '../components/appbar.dart';
 import 'number_add.dart';
@@ -17,20 +23,40 @@ class Home extends StatefulWidget {
 
 class _HomeState extends State<Home> {
   List phoneList = [];
+  // void smsPermission() async {
+  //   // İzin kontrolü
 
-  // Future<void> sendSms() async {
-  //   try {
-  //     SmsSender sender = SmsSender();
-  //     String address = '+905300946292';
-  //     String message = 'Test';
-  //     SmsMessage smsMessage = SmsMessage(
-  //         address: address, body: message, id: 1, date: DateTime.now());
-  //     await sender.sendSms(smsMessage);
-  //     log('SMS sent successfully!');
-  //   } catch (e) {
-  //     log('Failed to send SMS: $e');
-  //   }
   // }
+  sendSms() async {
+    var status = await Permission.sms.status;
+
+    if (status.isDenied) {
+      // İzin verilmemişse, izin isteği gösterilir.
+      await Permission.sms.request();
+      status = await Permission.sms.status;
+    }
+
+    if (status.isGranted) {
+      // İzin verilmişse, SMS'leri okumak için kodunuzu buraya yazabilirsiniz.
+      // Örneğin, SMS kutusundaki tüm mesajları okuyun:
+
+      log('izin alındı');
+    } else {
+      // İzin verilmediyse, kullanıcıyı uyarmak için bir mesaj gösterin.
+      log('SMS izni verilmedi');
+    }
+    SmsStatus result = await BackgroundSms.sendMessage(
+        phoneNumber: phoneList[0],
+        message:
+            'BU BİR TEST MESAJIDIR!!\nEĞER BU MESAJ SİZE ULAŞMIŞ İSE "EVET" OLARAK CEVAPLAYINIZ',
+        simSlot: 1);
+
+    if (result == SmsStatus.sent) {
+      log("Sent");
+    } else {
+      log("Failed");
+    }
+  }
 
   bool isTap = false;
   @override
@@ -52,18 +78,15 @@ class _HomeState extends State<Home> {
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
-              appbar(
-                context,
-                () {
-                  Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) => NumberAdd(
-                          phoneList: phoneList,
-                        ),
-                      ));
-                },
-              ),
+              appbar(context, () {
+                Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => NumberAdd(
+                        phoneList: phoneList,
+                      ),
+                    ));
+              }, true),
               Column(
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
@@ -75,7 +98,48 @@ class _HomeState extends State<Home> {
                         setState(() {
                           isTap = !isTap;
                         });
-                        //await sendSms();
+                        showDialog(
+                          context: context,
+                          builder: (context) {
+                            return AlertDialog(
+                              actions: [
+                                TextButton(
+                                  onPressed: () {
+                                    Navigator.pop(context);
+                                  },
+                                  child: const Text('Hayır'),
+                                ),
+                                TextButton(
+                                    style: ButtonStyle(
+                                        backgroundColor:
+                                            MaterialStateProperty.all(
+                                                AppColor.purple)),
+                                    onPressed: () {
+                                      sendSms();
+                                      Navigator.push(
+                                          context,
+                                          MaterialPageRoute(
+                                            builder: (context) => Success(),
+                                          ));
+                                    },
+                                    child: const Text(
+                                      'Evet',
+                                      style: TextStyle(color: AppColor.white),
+                                    ))
+                              ],
+                              icon: const Icon(Icons.help),
+                              title: const Text('Emin misin?',
+                                  style: TextStyle(
+                                      fontFamily: 'Gilroy-ExtraBold')),
+                              content: const Text(
+                                'Konumunu göndermek istediğinden emin misin?',
+                                style: TextStyle(
+                                    fontFamily: 'Gilroy-Light', fontSize: 14),
+                                textAlign: TextAlign.center,
+                              ),
+                            );
+                          },
+                        );
                       },
                       child: AnimatedContainer(
                         curve: Curves.fastOutSlowIn,

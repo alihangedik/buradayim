@@ -83,54 +83,55 @@ class _EarthquakeState extends State<Earthquake> {
     return SizedBox(
       height: MediaQuery.of(context).size.height / 1.188,
       child: FutureBuilder(
-          future: model,
-          builder: (context, snapshot) {
-            if (connectivityResult == ConnectivityResult.mobile ||
-                connectivityResult == ConnectivityResult.wifi) {
-              var data = snapshot.data;
+        future: model,
+        builder: (context, snapshot) {
+          if (connectivityResult == ConnectivityResult.mobile ||
+              connectivityResult == ConnectivityResult.wifi) {
+            var data = snapshot.data;
 
-              return RefreshIndicator(
-                onRefresh: _refresh,
-                child: data == null
-                    ? const Center(child: Text('Yükleniyor'))
-                    : earthquakeList(data),
-              );
-            }
-            return Wrap(
-              runSpacing: 50,
-              runAlignment: WrapAlignment.center,
-              children: [
-                Center(
-                  child: SvgPicture.string(AppSvg.notConnection),
-                ),
-                Column(
-                  children: [
-                    Padding(
-                      padding: const EdgeInsets.symmetric(vertical: 5),
-                      child: const Center(
-                        child: Text(
-                          'İnternet bağlantısı bulunamadı!',
-                          style: TextStyle(
-                              fontFamily: 'Gilroy-ExtraBold', fontSize: 20),
-                        ),
-                      ),
-                    ),
-                    Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 20),
-                      child: const Center(
-                        child: Text(
-                          'Şuan da internete bağlı değilsiniz. Lütfen bağlantınızı kontrol edip tekrar deneyin.',
-                          style: TextStyle(
-                              fontFamily: 'Gilroy-Light', fontSize: 20),
-                          textAlign: TextAlign.center,
-                        ),
-                      ),
-                    ),
-                  ],
-                )
-              ],
+            return RefreshIndicator(
+              onRefresh: _refresh,
+              child: data == null
+                  ? const Center(child: CircularProgressIndicator.adaptive())
+                  : earthquakeList(data),
             );
-          }),
+          }
+          return Wrap(
+            runSpacing: 50,
+            runAlignment: WrapAlignment.center,
+            children: [
+              Center(
+                child: SvgPicture.string(AppSvg.notConnection),
+              ),
+              Column(
+                children: const [
+                  Padding(
+                    padding: EdgeInsets.symmetric(vertical: 5),
+                    child: Center(
+                      child: Text(
+                        'İnternet bağlantısı bulunamadı!',
+                        style: TextStyle(
+                            fontFamily: 'Gilroy-ExtraBold', fontSize: 20),
+                      ),
+                    ),
+                  ),
+                  Padding(
+                    padding: EdgeInsets.symmetric(horizontal: 20),
+                    child: Center(
+                      child: Text(
+                        'Şuan da internete bağlı değilsiniz. Lütfen bağlantınızı kontrol edip tekrar deneyin.',
+                        style:
+                            TextStyle(fontFamily: 'Gilroy-Light', fontSize: 20),
+                        textAlign: TextAlign.center,
+                      ),
+                    ),
+                  ),
+                ],
+              )
+            ],
+          );
+        },
+      ),
     );
   }
 
