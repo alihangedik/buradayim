@@ -44,6 +44,8 @@ dependencies:
   url_launcher: ^6.1.10
   background_sms: ^0.0.4
   permission_handler: ^10.2.0
+  geolocator: ^9.0.2
+  geocoding: ^2.0.5
 
 dev_dependencies:
   flutter_test:

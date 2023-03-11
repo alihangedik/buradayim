@@ -3,7 +3,6 @@ import 'package:flutter_svg/svg.dart';
 
 import '../constant/color.dart';
 import '../constant/svg.dart';
-import '../pages/number_add.dart';
 
 Padding appbar(context, onPressed, bool isIcon) {
   return Padding(
@@ -19,6 +18,7 @@ Padding appbar(context, onPressed, bool isIcon) {
                 size: 40,
                 color: AppColor.white,
               ))
+          // ignore: prefer_const_constructors
           : SizedBox.shrink(),
       leading: Padding(
         padding: const EdgeInsets.only(left: 20.0),

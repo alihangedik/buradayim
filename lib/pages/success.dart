@@ -36,7 +36,7 @@ class _SuccessState extends State<Success> {
               child: CupertinoButton(
                 color: AppColor.purple,
                 borderRadius: BorderRadius.circular(25),
-                child: Text(
+                child: const Text(
                   'Ana Sayfaya Dön',
                   style:
                       TextStyle(fontFamily: 'Gilroy-ExtraBold', fontSize: 18),
@@ -45,7 +45,7 @@ class _SuccessState extends State<Success> {
                   Navigator.pushAndRemoveUntil(
                       context,
                       MaterialPageRoute(
-                        builder: (context) => Home(),
+                        builder: (context) => const Home(),
                       ),
                       (route) => false);
                 },

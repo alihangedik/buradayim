@@ -1,5 +1,8 @@
 import 'dart:developer';
 
+import 'package:geolocator/geolocator.dart';
+import 'package:geocoding/geocoding.dart';
+
 import 'package:background_sms/background_sms.dart';
 import 'package:buradayim/constant/color.dart';
 import 'package:buradayim/constant/svg.dart';
@@ -22,40 +25,80 @@ class Home extends StatefulWidget {
 }
 
 class _HomeState extends State<Home> {
-  List phoneList = [];
+  List<String> phoneList = [];
+
   // void smsPermission() async {
   //   // İzin kontrolü
 
   // }
+
   sendSms() async {
     var status = await Permission.sms.status;
 
     if (status.isDenied) {
-      // İzin verilmemişse, izin isteği gösterilir.
       await Permission.sms.request();
-      status = await Permission.sms.status;
     }
 
     if (status.isGranted) {
-      // İzin verilmişse, SMS'leri okumak için kodunuzu buraya yazabilirsiniz.
-      // Örneğin, SMS kutusundaki tüm mesajları okuyun:
-
       log('izin alındı');
     } else {
       // İzin verilmediyse, kullanıcıyı uyarmak için bir mesaj gösterin.
       log('SMS izni verilmedi');
     }
-    SmsStatus result = await BackgroundSms.sendMessage(
-        phoneNumber: phoneList[0],
-        message:
-            'BU BİR TEST MESAJIDIR!!\nEĞER BU MESAJ SİZE ULAŞMIŞ İSE "EVET" OLARAK CEVAPLAYINIZ',
-        simSlot: 1);
+    String currentPosition = await currentLocation();
+    log('--> $phoneList');
 
-    if (result == SmsStatus.sent) {
-      log("Sent");
-    } else {
-      log("Failed");
+    phoneList.forEach((phoneNumber) async {
+      await BackgroundSms.sendMessage(
+        message:
+            'DİKKAT BU BİR TEST MESAJIDIR!!!.\nEnkaz altındayım lütfen bana yardım edin.\n\nAnlık Lokasyon -->$currentPosition',
+        phoneNumber: phoneNumber,
+      );
+      log('phoneNumber: $phoneNumber');
+    });
+  }
+
+  locationPermission() async {
+    var status = await Permission.location.status;
+
+    if (status.isDenied) {
+      await Permission.location.request();
     }
+
+    if (status.isGranted) {
+      log('konum izni alındı.');
+    } else {
+      log('konum izni yok');
+    }
+  }
+
+  Future<String> currentLocation() async {
+    Position position = await Geolocator.getCurrentPosition();
+
+    double lat = position.latitude;
+    double long = position.longitude;
+
+    var placemark = await placemarkFromCoordinates(lat, long);
+
+    var currentPlacemark = placemark[0];
+    var city = currentPlacemark.locality;
+    var street = currentPlacemark.street;
+    var name = currentPlacemark.name;
+
+    String url = 'https://www.google.com/maps/@$lat$long,19.89z';
+
+    String result = '$url$city $street';
+
+    log(result);
+    log(url);
+    log(city.toString() + street.toString() + name.toString());
+    return url;
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    locationPermission();
   }
 
   bool isTap = false;
@@ -98,6 +141,7 @@ class _HomeState extends State<Home> {
                         setState(() {
                           isTap = !isTap;
                         });
+                        log(phoneList.toString());
                         showDialog(
                           context: context,
                           builder: (context) {
@@ -116,10 +160,12 @@ class _HomeState extends State<Home> {
                                                 AppColor.purple)),
                                     onPressed: () {
                                       sendSms();
+
                                       Navigator.push(
                                           context,
                                           MaterialPageRoute(
-                                            builder: (context) => Success(),
+                                            builder: (context) =>
+                                                const Success(),
                                           ));
                                     },
                                     child: const Text(
@@ -184,12 +230,12 @@ class _HomeState extends State<Home> {
                   mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                   children: [
                     button(152.0, 'Ayarlar', AppSvg.settings, () {
-                      Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            // ignore: prefer_const_constructors
-                            builder: (context) => Home(),
-                          ));
+                      currentLocation();
+                      // Navigator.push(
+                      //     context,
+                      //     MaterialPageRoute(
+                      //       builder: (context) => const Home(),
+                      //     ));
                     }),
                     button(218.0, 'Son Depremler', AppSvg.pulse, () {
                       Navigator.push(

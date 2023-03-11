@@ -39,12 +39,21 @@ class TurkishDateFormat {
   }
 
   static String turkishDatewithTime(DateTime dateTime) {
+    var hour = dateTime.hour <= 9 ? '0${dateTime.hour}' : dateTime.hour;
+    var minute = dateTime.minute <= 9 ? '0${dateTime.minute}' : dateTime.minute;
     return _dateFormat =
-        '${dateTime.day} ${_months[dateTime.month - 1]} ${_days[dateTime.weekday - 1]} ${dateTime.year} ${dateTime.hour}:${dateTime.minute}';
+        '${dateTime.day} ${_months[dateTime.month - 1]} ${_days[dateTime.weekday - 1]} ${dateTime.year} $hour:$minute';
   }
 
   static String turkishOnlyDay(DateTime dateTime) {
     return _dateFormat = '${dateTime.day} ${_months[dateTime.month - 1]} ';
+  }
+
+  static String turkishOnlyDaywithTime(DateTime dateTime) {
+    var hour = dateTime.hour <= 9 ? '0${dateTime.hour}' : dateTime.hour;
+    var minute = dateTime.minute <= 9 ? '0${dateTime.minute}' : dateTime.minute;
+    return _dateFormat =
+        '${dateTime.day} ${_months[dateTime.month - 1]} $hour:$minute';
   }
 
   static String turkishOnlyWeekday(DateTime dateTime) {

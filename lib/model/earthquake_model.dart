@@ -7,6 +7,7 @@ class EarthquakeModel {
   int? depth;
   String? region;
   String? lastUpdate;
+  String? mapImage;
 
   EarthquakeModel({
     this.time,
@@ -17,6 +18,7 @@ class EarthquakeModel {
     this.depth,
     this.region,
     this.lastUpdate,
+    this.mapImage,
   });
 
   EarthquakeModel.fromJson(Map json) {
@@ -28,6 +30,7 @@ class EarthquakeModel {
     depth = json['Depth'];
     region = json['Region'];
     lastUpdate = json['LastUpdate'];
+    mapImage = json['MapImage'];
   }
 
   Map<dynamic, dynamic> toJson() {
@@ -40,7 +43,7 @@ class EarthquakeModel {
     data['Longitude'] = longitude;
     data['Depth'] = depth;
     data['Region'] = region;
-
+    data['MapImage'] = mapImage;
     data['LastUpdate'] = lastUpdate;
     return data;
   }
