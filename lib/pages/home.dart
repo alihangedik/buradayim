@@ -27,12 +27,7 @@ class Home extends StatefulWidget {
 class _HomeState extends State<Home> {
   List<String> phoneList = [];
 
-  // void smsPermission() async {
-  //   // İzin kontrolü
-
-  // }
-
-  sendSms() async {
+  void smsPermission() async {
     var status = await Permission.sms.status;
 
     if (status.isDenied) {
@@ -45,17 +40,23 @@ class _HomeState extends State<Home> {
       // İzin verilmediyse, kullanıcıyı uyarmak için bir mesaj gösterin.
       log('SMS izni verilmedi');
     }
-    String currentPosition = await currentLocation();
-    log('--> $phoneList');
+  }
 
-    phoneList.forEach((phoneNumber) async {
-      await BackgroundSms.sendMessage(
+  sendSms() async {
+    String currentPosition = await currentLocation();
+    log('--> ${phoneList[0]}');
+
+    for (var i = 0; i < phoneList.length; i++) {
+      SmsStatus result = await BackgroundSms.sendMessage(
+        phoneNumber: phoneList[i],
         message:
             'DİKKAT BU BİR TEST MESAJIDIR!!!.\nEnkaz altındayım lütfen bana yardım edin.\n\nAnlık Lokasyon -->$currentPosition',
-        phoneNumber: phoneNumber,
       );
-      log('phoneNumber: $phoneNumber');
-    });
+
+      if (result == SmsStatus.sent) {
+        log('gonderildi');
+      }
+    }
   }
 
   locationPermission() async {
@@ -78,18 +79,15 @@ class _HomeState extends State<Home> {
     double lat = position.latitude;
     double long = position.longitude;
 
-    var placemark = await placemarkFromCoordinates(lat, long);
+    List<Placemark> placemark = await placemarkFromCoordinates(lat, long);
 
-    var currentPlacemark = placemark[0];
-    var city = currentPlacemark.locality;
-    var street = currentPlacemark.street;
-    var name = currentPlacemark.name;
+    Placemark currentPlacemark = placemark[0];
+    String? city = currentPlacemark.locality;
+    String? street = currentPlacemark.street;
+    String? name = currentPlacemark.name;
 
-    String url = 'https://www.google.com/maps/@$lat$long,19.89z';
+    String url = 'https://www.google.com/maps/@$lat$long';
 
-    String result = '$url$city $street';
-
-    log(result);
     log(url);
     log(city.toString() + street.toString() + name.toString());
     return url;
@@ -141,6 +139,8 @@ class _HomeState extends State<Home> {
                         setState(() {
                           isTap = !isTap;
                         });
+                        smsPermission();
+
                         log(phoneList.toString());
                         showDialog(
                           context: context,
@@ -173,7 +173,11 @@ class _HomeState extends State<Home> {
                                       style: TextStyle(color: AppColor.white),
                                     ))
                               ],
-                              icon: const Icon(Icons.help),
+                              //Bir daha gösterme seçeneği eklenecek
+                              icon: const Icon(
+                                Icons.help,
+                                size: 31,
+                              ),
                               title: const Text('Emin misin?',
                                   style: TextStyle(
                                       fontFamily: 'Gilroy-ExtraBold')),

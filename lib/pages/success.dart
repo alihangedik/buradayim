@@ -28,6 +28,10 @@ class _SuccessState extends State<Success> {
             'Konumunu Gönderdik',
             style: TextStyle(fontSize: 30, fontFamily: 'Gilroy-ExtraBold'),
           ),
+          Text(
+            'Konumunu Gönderdik',
+            style: TextStyle(fontSize: 30, fontFamily: 'Gilroy-Light'),
+          ),
           Padding(
             padding: const EdgeInsets.symmetric(vertical: 100),
             child: SizedBox(

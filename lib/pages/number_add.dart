@@ -142,19 +142,21 @@ class _NumberAddState extends State<NumberAdd> {
         splashColor: AppColor.transp,
         highlightColor: AppColor.transp,
         onTap: () {
-          if (widget.phoneList.length < 3 &&
-              tfName.text.isNotEmpty &&
-              tfName.text != '' &&
-              !widget.phoneList.contains(tfPhone.text)) {
-            widget.phoneList.add(tfPhone.text);
-            setState(() {});
-          }
+          RegExp regExp = RegExp(r'^(05(\d{9}))$');
 
-          if (nameList.length < 3 &&
-              tfPhone.text.isNotEmpty &&
-              tfPhone.text.length < 12 &&
-              !nameList.contains(tfName.text)) {
-            nameList.add(tfName.text);
+          if (!regExp.hasMatch(tfPhone.text)) {
+            ScaffoldMessenger.of(context).showSnackBar(
+              const SnackBar(
+                duration: Duration(seconds: 4),
+                backgroundColor: AppColor.purple,
+                content: Text(
+                  'Lütfen geçerli bir telefon numarası giriniz (05xxxxxxxx)',
+                  style: TextStyle(
+                      fontFamily: 'Gilroy-ExtraBold', color: AppColor.white),
+                ),
+              ),
+            );
+            return;
           }
           tfName.text = '';
           tfPhone.text = '';
@@ -255,7 +257,6 @@ class _NumberAddState extends State<NumberAdd> {
                   color: AppColor.white,
                   fontFamily: 'Gilroy-ExtraBold',
                   fontSize: 20),
-              inputFormatters: formatter,
               keyboardType: type,
               controller: controller,
               decoration: InputDecoration(

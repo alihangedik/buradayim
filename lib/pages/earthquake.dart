@@ -1,5 +1,4 @@
 import 'dart:async';
-import 'dart:developer';
 
 import 'package:buradayim/components/date_format.dart';
 import 'package:buradayim/constant/color.dart';
@@ -30,7 +29,7 @@ class _EarthquakeState extends State<Earthquake> {
 
   Future<void> updateStatus(ConnectivityResult result) async {
     connectivityResult = result;
-    log(result.name.toString());
+
     setState(() {});
   }
 
@@ -38,9 +37,7 @@ class _EarthquakeState extends State<Earthquake> {
     late ConnectivityResult result;
     try {
       result = await connectivity.checkConnectivity();
-    } on PlatformException catch (e) {
-      log(e.message.toString());
-    }
+    } on PlatformException catch (e) {}
     return updateStatus(result);
   }
 
@@ -54,8 +51,8 @@ class _EarthquakeState extends State<Earthquake> {
   }
 
   Future<void> _refresh() async {
-    EarthquakeService().fetchData();
-    log('refresh');
+    await EarthquakeService().fetchData();
+
     setState(() {});
   }
 
