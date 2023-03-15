@@ -1,6 +1,8 @@
+import 'dart:developer';
 import 'package:buradayim/components/date_format.dart';
 import 'package:buradayim/components/riversible_appbar.dart';
 import 'package:buradayim/constant/color.dart';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 
@@ -17,6 +19,7 @@ class EartquakeDetails extends StatefulWidget {
     this.latitude,
     this.longitude,
     this.mapImage,
+    this.data,
   });
   int? depth;
   String? region;
@@ -26,6 +29,7 @@ class EartquakeDetails extends StatefulWidget {
   String? longitude;
   String? latitude;
   String? mapImage;
+  var data;
 
   @override
   State<EartquakeDetails> createState() => _EartquakeDetailsState();
@@ -62,37 +66,64 @@ class _EartquakeDetailsState extends State<EartquakeDetails> {
                               ]),
                         ),
                         child: widget.mapImage == null
-                            ? const SizedBox(
-                                height: 350,
-                                child:
-                                    Center(child: CircularProgressIndicator()))
+                            ? Container(
+                                color: AppColor.purple,
+                                height: 512,
+                                width: 512,
+                              )
                             : Image.network(widget.mapImage.toString()),
                       ),
                       Positioned(
                         left: 25,
                         child: Container(
                           child: riversibleAppbar(
-                              'Son Depremler', false, context, 40.0),
+                              'Son Depremler', false, context, 40.0, true),
                         ),
                       ),
-                      detailsContainer()
+                      detailsContainer(),
                     ],
                   ),
-                  detailsList()
+                  detailsList(),
+                  SizedBox(
+                    width: MediaQuery.of(context).size.width / 1.9,
+                    height: MediaQuery.of(context).size.height / 16,
+                    child: OutlinedButton(
+                      style: ButtonStyle(
+                        backgroundColor:
+                            MaterialStateProperty.all(AppColor.purple),
+                      ),
+                      child: const Text(
+                        'Konuma Git',
+                        style: TextStyle(
+                            fontFamily: 'Gilroy-ExtraBold',
+                            fontSize: 20,
+                            color: AppColor.white),
+                      ),
+                      onPressed: () {
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          SnackBar(
+                            content: Text(
+                                'Konum: ${widget.latitude}, ${widget.longitude}'),
+                          ),
+                        );
+                        log('${widget.latitude}, ${widget.longitude}');
+                      },
+                    ),
+                  )
                 ],
               ),
             ],
           ),
         ),
-        Positioned(
-          bottom: -100,
-          right: -170,
-          child: SvgPicture.string(
-            AppSvg.buradayimLogo,
-            color: AppColor.purple.withOpacity(0.2),
-            height: 514,
-          ),
-        ),
+        // Positioned(
+        //   bottom: -100,
+        //   right: -170,
+        //   child: SvgPicture.string(
+        //     AppSvg.buradayimLogo,
+        //     color: AppColor.purple.withOpacity(0.2),
+        //     height: 514,
+        //   ),
+        // ),
       ],
     );
   }
@@ -100,33 +131,30 @@ class _EartquakeDetailsState extends State<EartquakeDetails> {
   Padding detailsList() {
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 50.0, horizontal: 30),
-      child: Container(
-        height: 320,
-        child: ListView(
-          shrinkWrap: true,
-          children: [
-            detailsListtile(AppSvg.arrow, 'Derinlik', '${widget.depth} km'),
-            detailsListtile(
-              AppSvg.time,
-              'Zaman',
-              TurkishDateFormat.turkishOnlyDaywithTime(
-                DateTime.parse(
-                  widget.time.toString().replaceAll('/', '-'),
-                ),
+      child: ListView(
+        shrinkWrap: true,
+        children: [
+          detailsListtile(AppSvg.arrow, 'Derinlik', '${widget.depth} km'),
+          detailsListtile(
+            AppSvg.time,
+            'Zaman',
+            TurkishDateFormat.turkishOnlyDaywithTime(
+              DateTime.parse(
+                widget.time.toString().replaceAll('/', '-'),
               ),
             ),
-            detailsListtile(
-              AppSvg.depth,
-              'Latitude',
-              widget.latitude.toString().replaceAll('&deg;', '°'),
-            ),
-            detailsListtile(
-              AppSvg.depth,
-              'Longitude',
-              widget.longitude.toString().replaceAll('&deg;', '°'),
-            ),
-          ],
-        ),
+          ),
+          detailsListtile(
+            AppSvg.depth,
+            'Latitude',
+            widget.latitude.toString().replaceAll('&deg;', '°'),
+          ),
+          detailsListtile(
+            AppSvg.depth,
+            'Longitude',
+            widget.longitude.toString().replaceAll('&deg;', '°'),
+          ),
+        ],
       ),
     );
   }
@@ -191,7 +219,7 @@ class _EartquakeDetailsState extends State<EartquakeDetails> {
 
   ListTile detailsListtile(icon, title, data) {
     return ListTile(
-      contentPadding: const EdgeInsets.symmetric(vertical: 10),
+      contentPadding: const EdgeInsets.symmetric(vertical: 0),
       leading: SvgPicture.string(
         icon,
         width: 25,

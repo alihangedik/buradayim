@@ -41,7 +41,7 @@ class _NumberAddState extends State<NumberAdd> {
           body: Column(
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
-              riversibleAppbar('Numara Ekle', false, context, 40.0),
+              riversibleAppbar('Numara Ekle', false, context, 40.0, false),
               textfields(),
               tfWrap(
                 context,
@@ -157,6 +157,21 @@ class _NumberAddState extends State<NumberAdd> {
               ),
             );
             return;
+          }
+
+          if (widget.phoneList.length < 3 &&
+              tfName.text.isNotEmpty &&
+              tfName.text != '' &&
+              !widget.phoneList.contains(tfPhone.text)) {
+            widget.phoneList.add(tfPhone.text);
+            setState(() {});
+          }
+
+          if (nameList.length < 3 &&
+              tfPhone.text.isNotEmpty &&
+              tfPhone.text.length < 12 &&
+              !nameList.contains(tfName.text)) {
+            nameList.add(tfName.text);
           }
           tfName.text = '';
           tfPhone.text = '';

@@ -1,7 +1,8 @@
 import 'dart:developer';
 
-import 'package:geolocator/geolocator.dart';
+import 'package:buradayim/pages/setting.dart';
 import 'package:geocoding/geocoding.dart';
+import 'package:geolocator/geolocator.dart';
 
 import 'package:background_sms/background_sms.dart';
 import 'package:buradayim/constant/color.dart';
@@ -35,7 +36,7 @@ class _HomeState extends State<Home> {
     }
 
     if (status.isGranted) {
-      log('izin alındı');
+      log('SMS izni alındı');
     } else {
       // İzin verilmediyse, kullanıcıyı uyarmak için bir mesaj gösterin.
       log('SMS izni verilmedi');
@@ -44,17 +45,20 @@ class _HomeState extends State<Home> {
 
   sendSms() async {
     String currentPosition = await currentLocation();
-    log('--> ${phoneList[0]}');
+    log(currentPosition);
+    log('--> ${phoneList.toString()}');
 
     for (var i = 0; i < phoneList.length; i++) {
       SmsStatus result = await BackgroundSms.sendMessage(
         phoneNumber: phoneList[i],
         message:
-            'DİKKAT BU BİR TEST MESAJIDIR!!!.\nEnkaz altındayım lütfen bana yardım edin.\n\nAnlık Lokasyon -->$currentPosition',
+            '"Alihan Gedik"\n Enkaz altındayım lütfen bana yardım edin.\nAnlık Lokasyonum $currentPosition',
       );
 
       if (result == SmsStatus.sent) {
-        log('gonderildi');
+        log('gönderildi');
+      } else if (result == SmsStatus.failed) {
+        log('hata oluştu');
       }
     }
   }
@@ -74,7 +78,9 @@ class _HomeState extends State<Home> {
   }
 
   Future<String> currentLocation() async {
-    Position position = await Geolocator.getCurrentPosition();
+    Position position = await Geolocator.getCurrentPosition(
+        forceAndroidLocationManager: true,
+        desiredAccuracy: LocationAccuracy.best);
 
     double lat = position.latitude;
     double long = position.longitude;
@@ -83,13 +89,12 @@ class _HomeState extends State<Home> {
 
     Placemark currentPlacemark = placemark[0];
     String? city = currentPlacemark.locality;
-    String? street = currentPlacemark.street;
-    String? name = currentPlacemark.name;
+    String? street = currentPlacemark.subLocality;
+    String? thoroughfare = currentPlacemark.thoroughfare;
 
-    String url = 'https://www.google.com/maps/@$lat$long';
+    String url = 'https://www.google.com/maps/@$lat,$long,20.25z'
+        ' $thoroughfare';
 
-    log(url);
-    log(city.toString() + street.toString() + name.toString());
     return url;
   }
 
@@ -141,7 +146,6 @@ class _HomeState extends State<Home> {
                         });
                         smsPermission();
 
-                        log(phoneList.toString());
                         showDialog(
                           context: context,
                           builder: (context) {
@@ -158,9 +162,8 @@ class _HomeState extends State<Home> {
                                         backgroundColor:
                                             MaterialStateProperty.all(
                                                 AppColor.purple)),
-                                    onPressed: () {
-                                      sendSms();
-
+                                    onPressed: () async {
+                                      await sendSms();
                                       Navigator.push(
                                           context,
                                           MaterialPageRoute(
@@ -219,7 +222,7 @@ class _HomeState extends State<Home> {
                         TextStyle(fontSize: 30, fontFamily: 'Gilroy-ExtraBold'),
                   ),
                   const Text(
-                    'Konumunu göndermek için yukarıda ki\nbutona tıkla.',
+                    'Konumunu göndermek için yukarıdaki\nbutona tıkla.',
                     textAlign: TextAlign.center,
                     style: TextStyle(
                         fontSize: 16,
@@ -234,12 +237,11 @@ class _HomeState extends State<Home> {
                   mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                   children: [
                     button(152.0, 'Ayarlar', AppSvg.settings, () {
-                      currentLocation();
-                      // Navigator.push(
-                      //     context,
-                      //     MaterialPageRoute(
-                      //       builder: (context) => const Home(),
-                      //     ));
+                      Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => const Settings(),
+                          ));
                     }),
                     button(218.0, 'Son Depremler', AppSvg.pulse, () {
                       Navigator.push(
@@ -255,6 +257,52 @@ class _HomeState extends State<Home> {
           ),
         ],
       ),
+    );
+  }
+
+  Future<dynamic> _showUnknowDialog(BuildContext context) {
+    return showDialog(
+      context: context,
+      builder: (context) {
+        return AlertDialog(
+          actions: [
+            TextButton(
+              onPressed: () {
+                Navigator.pop(context);
+              },
+              child: const Text('Kapat'),
+            ),
+            TextButton(
+                style: ButtonStyle(
+                    backgroundColor:
+                        MaterialStateProperty.all(AppColor.purple)),
+                onPressed: () {
+                  Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => NumberAdd(
+                          phoneList: [],
+                        ),
+                      ));
+                },
+                child: const Text(
+                  'Numara Ekle',
+                  style: TextStyle(color: AppColor.white),
+                ))
+          ],
+          icon: const Icon(
+            Icons.warning_rounded,
+            size: 31,
+          ),
+          title: const Text('Numara Listen Boş!',
+              style: TextStyle(fontFamily: 'Gilroy-ExtraBold')),
+          content: const Text(
+            'Numara listende eklenmiş numara bulunmuyor. Lütfen numara ekle.',
+            style: TextStyle(fontFamily: 'Gilroy-Light', fontSize: 14),
+            textAlign: TextAlign.center,
+          ),
+        );
+      },
     );
   }
 

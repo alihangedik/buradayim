@@ -4,7 +4,7 @@ import 'package:flutter_svg/svg.dart';
 import '../constant/color.dart';
 import '../constant/svg.dart';
 
-Padding riversibleAppbar(title, iconVisible, context, top) {
+Padding riversibleAppbar(title, iconVisible, context, top, bool isShadow) {
   return Padding(
     padding: EdgeInsets.only(top: top),
     child: Wrap(
@@ -39,7 +39,20 @@ Padding riversibleAppbar(title, iconVisible, context, top) {
               padding: const EdgeInsets.only(
                 left: 20.0,
               ),
-              child: SizedBox(
+              child: Container(
+                decoration: BoxDecoration(
+                  boxShadow: [
+                    isShadow == true
+                        ? const BoxShadow(
+                            color: AppColor.grey,
+                            blurRadius: 50,
+                            spreadRadius: 1)
+                        : const BoxShadow(
+                            color: AppColor.transp,
+                            blurRadius: 0,
+                            spreadRadius: 0)
+                  ],
+                ),
                 width: 30,
                 child: SvgPicture.string(
                   AppSvg.buradayimLogo,
@@ -66,7 +79,18 @@ Padding riversibleAppbar(title, iconVisible, context, top) {
             ),
             title: Text(
               title,
-              style: const TextStyle(
+              style: TextStyle(
+                  shadows: [
+                    isShadow == true
+                        ? const BoxShadow(
+                            color: AppColor.grey,
+                            blurRadius: 50,
+                            spreadRadius: 50)
+                        : const BoxShadow(
+                            color: AppColor.white,
+                            blurRadius: 0,
+                            spreadRadius: 0)
+                  ],
                   fontFamily: 'Gilroy-ExtraBold',
                   color: AppColor.white,
                   fontSize: 20),

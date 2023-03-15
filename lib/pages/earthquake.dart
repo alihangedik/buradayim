@@ -61,7 +61,7 @@ class _EarthquakeState extends State<Earthquake> {
     return Scaffold(
       body: Column(
         children: [
-          riversibleAppbar('Son Depremler', false, context, 40.0),
+          riversibleAppbar('Son Depremler', false, context, 40.0, false),
           infoText(),
           futureBuilder(context)
         ],
@@ -153,15 +153,15 @@ class _EarthquakeState extends State<Earthquake> {
                   context,
                   MaterialPageRoute(
                     builder: (context) => EartquakeDetails(
-                      depth: data[index].depth,
-                      region: data[index].region,
-                      time: data[index].time,
-                      magnitude: data[index].magnitude,
-                      magnitudeType: data[index].magnitudeType,
-                      latitude: data[index].latitude,
-                      longitude: data[index].longitude,
-                      mapImage: data[index].mapImage,
-                    ),
+                        depth: data[index].depth,
+                        region: data[index].region,
+                        time: data[index].time,
+                        magnitude: data[index].magnitude,
+                        magnitudeType: data[index].magnitudeType,
+                        latitude: data[index].latitude,
+                        longitude: data[index].longitude,
+                        mapImage: data[index].mapImage,
+                        data: data[index]),
                   ));
             },
             child: Card(
