@@ -1,6 +1,10 @@
+import 'dart:convert';
+import 'dart:developer';
+
 import 'package:buradayim/components/riversible_appbar.dart';
 import 'package:buradayim/constant/color.dart';
 import 'package:buradayim/constant/svg.dart';
+import 'package:buradayim/service/storage_service.dart';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -9,19 +13,21 @@ import 'package:flutter_svg/svg.dart';
 class NumberAdd extends StatefulWidget {
   NumberAdd({super.key, required this.phoneList});
 
-  List<String> phoneList = [];
-
+  var phoneList = [];
   @override
   State<NumberAdd> createState() => _NumberAddState();
 }
 
 class _NumberAddState extends State<NumberAdd> {
+  StorageService storageService = StorageService();
+
   late TextEditingController tfName;
   late TextEditingController tfPhone;
   late FocusNode fnName;
   late FocusNode fnPhone;
   @override
   void initState() {
+    readData();
     super.initState();
     tfName = TextEditingController();
     tfPhone = TextEditingController();
@@ -29,14 +35,26 @@ class _NumberAddState extends State<NumberAdd> {
     fnPhone = FocusNode();
   }
 
-  List nameList = [];
+  Future<void> readData() async {
+    widget.phoneList = await storageService.readData('phone') ?? [];
+    nameList = await storageService.readData('name') ?? [];
+  }
+
+  Future<void> saveData() async {
+    await storageService.saveData('phone', widget.phoneList.toString());
+    await storageService.saveData('name', nameList.toString());
+  }
+
+  var nameList = [];
   bool isTap = false;
+
   @override
   Widget build(BuildContext context) {
     return Stack(
       clipBehavior: Clip.none,
       children: [
         Scaffold(
+          resizeToAvoidBottomInset: false,
           backgroundColor: AppColor.white,
           body: Column(
             crossAxisAlignment: CrossAxisAlignment.center,
@@ -72,7 +90,7 @@ class _NumberAddState extends State<NumberAdd> {
                 'Eklenen Numaralar',
                 style: TextStyle(fontFamily: 'Gilroy-Light', fontSize: 20),
               ),
-              phoneList(context)
+              phoneListtile(context)
             ],
           ),
         ),
@@ -89,7 +107,7 @@ class _NumberAddState extends State<NumberAdd> {
     );
   }
 
-  SizedBox phoneList(BuildContext context) {
+  SizedBox phoneListtile(BuildContext context) {
     return SizedBox(
       height: MediaQuery.of(context).size.height / 2.4,
       width: MediaQuery.of(context).size.width / 1.1,
@@ -141,9 +159,8 @@ class _NumberAddState extends State<NumberAdd> {
       child: InkWell(
         splashColor: AppColor.transp,
         highlightColor: AppColor.transp,
-        onTap: () {
+        onTap: () async {
           RegExp regExp = RegExp(r'^(05(\d{9}))$');
-
           if (!regExp.hasMatch(tfPhone.text)) {
             ScaffoldMessenger.of(context).showSnackBar(
               const SnackBar(
@@ -173,6 +190,7 @@ class _NumberAddState extends State<NumberAdd> {
               !nameList.contains(tfName.text)) {
             nameList.add(tfName.text);
           }
+          saveData();
           tfName.text = '';
           tfPhone.text = '';
           fnName.unfocus();

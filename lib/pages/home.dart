@@ -88,8 +88,8 @@ class _HomeState extends State<Home> {
     List<Placemark> placemark = await placemarkFromCoordinates(lat, long);
 
     Placemark currentPlacemark = placemark[0];
-    String? city = currentPlacemark.locality;
-    String? street = currentPlacemark.subLocality;
+    // String? city = currentPlacemark.locality;
+    // String? street = currentPlacemark.subLocality;
     String? thoroughfare = currentPlacemark.thoroughfare;
 
     String url = 'https://www.google.com/maps/@$lat,$long,20.25z'
