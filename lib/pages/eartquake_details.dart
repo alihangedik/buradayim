@@ -5,6 +5,7 @@ import 'package:buradayim/constant/color.dart';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 import '../constant/svg.dart';
 
@@ -36,6 +37,14 @@ class EartquakeDetails extends StatefulWidget {
 }
 
 class _EartquakeDetailsState extends State<EartquakeDetails> {
+  Future<void> goLocation(String location) async {
+    if (await canLaunch(location)) {
+      await launch(location);
+    } else {
+      throw 'Could not launch $location';
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Stack(
@@ -100,13 +109,21 @@ class _EartquakeDetailsState extends State<EartquakeDetails> {
                             color: AppColor.white),
                       ),
                       onPressed: () {
-                        ScaffoldMessenger.of(context).showSnackBar(
-                          SnackBar(
-                            content: Text(
-                                'Konum: ${widget.latitude}, ${widget.longitude}'),
-                          ),
-                        );
-                        log('${widget.latitude}, ${widget.longitude}');
+                        var latitude = widget.latitude
+                            .toString()
+                            .replaceAll('&deg; N', '');
+                        var longitude = widget.longitude
+                            .toString()
+                            .replaceAll('&deg; E', '');
+                        goLocation(
+                            'https://www.google.com/maps/search/?api=1&query=$latitude,$longitude');
+                        // ScaffoldMessenger.of(context).showSnackBar(
+                        //   SnackBar(
+                        //     content: Text(
+                        //         'Konum: ${widget.latitude}, ${widget.longitude}'),
+                        //   ),
+                        // );
+                        log('https://www.google.com/maps/search/?api=1&query=$latitude,$longitude');
                       },
                     ),
                   )

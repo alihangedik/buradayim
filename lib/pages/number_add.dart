@@ -1,4 +1,3 @@
-import 'dart:convert';
 import 'dart:developer';
 
 import 'package:buradayim/components/riversible_appbar.dart';
@@ -27,7 +26,8 @@ class _NumberAddState extends State<NumberAdd> {
   late FocusNode fnPhone;
   @override
   void initState() {
-    readData();
+    readPhoneData();
+    readNameData();
     super.initState();
     tfName = TextEditingController();
     tfPhone = TextEditingController();
@@ -35,75 +35,89 @@ class _NumberAddState extends State<NumberAdd> {
     fnPhone = FocusNode();
   }
 
-  Future<void> readData() async {
-    widget.phoneList = await storageService.readData('phone') ?? [];
-    nameList = await storageService.readData('name') ?? [];
-  }
-
-  Future<void> saveData() async {
-    await storageService.saveData('phone', widget.phoneList.toString());
-    await storageService.saveData('name', nameList.toString());
-  }
-
   var nameList = [];
+
+  Future<void> readPhoneData() async {
+    for (var element in widget.phoneList) {
+      await storageService.readData(element) ?? [];
+    }
+  }
+
+  Future<void> readNameData() async {
+    for (var element in nameList) {
+      await storageService.readData(element) ?? ['Alihan'];
+    }
+  }
+
+  Future<void> savePhoneData() async {
+    await storageService.saveData('phone', widget.phoneList.toString());
+  }
+
+  Future<void> saveNameData() async {
+    await storageService.saveData('name', tfName.text);
+  }
+
   bool isTap = false;
 
   @override
   Widget build(BuildContext context) {
-    return Stack(
-      clipBehavior: Clip.none,
-      children: [
-        Scaffold(
-          resizeToAvoidBottomInset: false,
-          backgroundColor: AppColor.white,
-          body: Column(
-            crossAxisAlignment: CrossAxisAlignment.center,
-            children: [
-              riversibleAppbar('Numara Ekle', false, context, 40.0, false),
-              textfields(),
-              tfWrap(
-                context,
-                Icons.person,
-                'Telefon Sahibinin Adı',
-                tfName,
-                TextInputType.name,
-                [],
-                fnName,
-              ),
-              const SizedBox(
-                height: 10,
-              ),
-              tfWrap(
-                context,
-                Icons.phone,
-                'Telefon Numarası',
-                tfPhone,
-                TextInputType.phone,
-                [
-                  FilteringTextInputFormatter.digitsOnly,
-                  LengthLimitingTextInputFormatter(11),
-                ],
-                fnPhone,
-              ),
-              addButton(),
-              const Text(
-                'Eklenen Numaralar',
-                style: TextStyle(fontFamily: 'Gilroy-Light', fontSize: 20),
-              ),
-              phoneListtile(context)
-            ],
+    return Container(
+      color: AppColor.white,
+      child: Stack(
+        clipBehavior: Clip.none,
+        children: [
+          Positioned(
+            bottom: -100,
+            right: -170,
+            child: SvgPicture.string(
+              AppSvg.buradayimLogo,
+              color: AppColor.purple.withOpacity(0.2),
+              height: 514,
+            ),
           ),
-        ),
-        Positioned(
-          bottom: -100,
-          right: -170,
-          child: SvgPicture.string(
-            AppSvg.buradayimLogo,
-            color: AppColor.purple.withOpacity(0.2),
-            height: 514,
+          Scaffold(
+            resizeToAvoidBottomInset: false,
+            backgroundColor: AppColor.transp,
+            body: Column(
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: [
+                riversibleAppbar('Numara Ekle', false, context, 40.0, false),
+                textfields(),
+                tfWrap(
+                  context,
+                  Icons.person,
+                  'Telefon Sahibinin Adı',
+                  tfName,
+                  TextInputType.name,
+                  [],
+                  fnName,
+                ),
+                const SizedBox(
+                  height: 10,
+                ),
+                tfWrap(
+                  context,
+                  Icons.phone,
+                  'Telefon Numarası',
+                  tfPhone,
+                  TextInputType.phone,
+                  [
+                    FilteringTextInputFormatter.digitsOnly,
+                    LengthLimitingTextInputFormatter(11),
+                  ],
+                  fnPhone,
+                ),
+                addButton(),
+                const Text(
+                  'Eklenen Numaralar',
+                  style: TextStyle(fontFamily: 'Gilroy-Light', fontSize: 20),
+                ),
+                phoneListtile(context)
+              ],
+            ),
           ),
-        ),
-      ],
+        ],
+      ),
     );
   }
 
@@ -132,8 +146,8 @@ class _NumberAddState extends State<NumberAdd> {
                   icon: SvgPicture.string(AppSvg.trash)),
               tileColor: AppColor.purple,
               title: Text(
-                nameList[index],
-                style: const TextStyle(
+                nameList.isEmpty ? 'Ad alınamadı!' : nameList[index].toString(),
+                style: TextStyle(
                     fontFamily: 'Gilroy-ExtraBold',
                     fontSize: 20,
                     color: AppColor.white),
@@ -164,6 +178,9 @@ class _NumberAddState extends State<NumberAdd> {
           if (!regExp.hasMatch(tfPhone.text)) {
             ScaffoldMessenger.of(context).showSnackBar(
               const SnackBar(
+                shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.all(Radius.circular(25))),
+                showCloseIcon: true,
                 duration: Duration(seconds: 4),
                 backgroundColor: AppColor.purple,
                 content: Text(
@@ -189,8 +206,10 @@ class _NumberAddState extends State<NumberAdd> {
               tfPhone.text.length < 12 &&
               !nameList.contains(tfName.text)) {
             nameList.add(tfName.text);
+            setState(() {});
           }
-          saveData();
+          savePhoneData();
+          saveNameData();
           tfName.text = '';
           tfPhone.text = '';
           fnName.unfocus();
