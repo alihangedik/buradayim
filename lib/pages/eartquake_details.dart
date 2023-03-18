@@ -41,107 +41,136 @@ class _EartquakeDetailsState extends State<EartquakeDetails> {
     if (await canLaunch(location)) {
       await launch(location);
     } else {
-      throw 'Could not launch $location';
+      _showAlertDialog();
     }
+  }
+
+  Future<dynamic> _showAlertDialog() {
+    return showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        elevation: 0,
+        title: const Center(
+            child: Icon(Icons.warning_rounded, color: AppColor.grey, size: 35)),
+        content: const Text(
+          'Konuma gitmek için harita uygulaması bulunamadı.',
+          style: TextStyle(fontFamily: 'Gilroy-ExtraBold'),
+          textAlign: TextAlign.center,
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context),
+            child: const Text(
+              'Kapat',
+              style: TextStyle(fontFamily: 'Gilroy-ExtraBold'),
+            ),
+          )
+        ],
+      ),
+    );
   }
 
   @override
   Widget build(BuildContext context) {
-    return Stack(
-      children: [
-        Scaffold(
-          body: Column(
-            children: [
-              Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                crossAxisAlignment: CrossAxisAlignment.center,
-                children: [
-                  Stack(
-                    clipBehavior: Clip.none,
-                    children: [
-                      DecoratedBox(
-                        position: DecorationPosition.foreground,
-                        decoration: BoxDecoration(
-                          gradient: LinearGradient(
-                              begin: FractionalOffset.topCenter,
-                              end: FractionalOffset.bottomCenter,
-                              colors: [
-                                AppColor.transp,
-                                AppColor.white.withOpacity(1),
-                              ],
-                              stops: const [
-                                0,
-                                0.9
-                              ]),
-                        ),
-                        child: widget.mapImage == null
-                            ? Container(
-                                color: AppColor.purple,
-                                height: 512,
-                                width: 512,
-                              )
-                            : Image.network(widget.mapImage.toString()),
-                      ),
-                      Positioned(
-                        left: 25,
-                        child: Container(
-                          child: riversibleAppbar(
-                              'Son Depremler', false, context, 40.0, true),
-                        ),
-                      ),
-                      detailsContainer(),
-                    ],
-                  ),
-                  detailsList(),
-                  SizedBox(
-                    width: MediaQuery.of(context).size.width / 1.9,
-                    height: MediaQuery.of(context).size.height / 16,
-                    child: OutlinedButton(
-                      style: ButtonStyle(
-                        backgroundColor:
-                            MaterialStateProperty.all(AppColor.purple),
-                      ),
-                      child: const Text(
-                        'Konuma Git',
-                        style: TextStyle(
-                            fontFamily: 'Gilroy-ExtraBold',
-                            fontSize: 20,
-                            color: AppColor.white),
-                      ),
-                      onPressed: () {
-                        var latitude = widget.latitude
-                            .toString()
-                            .replaceAll('&deg; N', '');
-                        var longitude = widget.longitude
-                            .toString()
-                            .replaceAll('&deg; E', '');
-                        goLocation(
-                            'https://www.google.com/maps/search/?api=1&query=$latitude,$longitude');
-                        // ScaffoldMessenger.of(context).showSnackBar(
-                        //   SnackBar(
-                        //     content: Text(
-                        //         'Konum: ${widget.latitude}, ${widget.longitude}'),
-                        //   ),
-                        // );
-                        log('https://www.google.com/maps/search/?api=1&query=$latitude,$longitude');
-                      },
-                    ),
-                  )
-                ],
-              ),
-            ],
+    return Container(
+      color: AppColor.white,
+      child: Stack(
+        children: [
+          Positioned(
+            bottom: -100,
+            right: -170,
+            child: SvgPicture.string(
+              AppSvg.buradayimLogo,
+              color: AppColor.purple.withOpacity(0.2),
+              height: 514,
+            ),
           ),
-        ),
-        // Positioned(
-        //   bottom: -100,
-        //   right: -170,
-        //   child: SvgPicture.string(
-        //     AppSvg.buradayimLogo,
-        //     color: AppColor.purple.withOpacity(0.2),
-        //     height: 514,
-        //   ),
-        // ),
-      ],
+          Scaffold(
+            backgroundColor: AppColor.transp,
+            body: Column(
+              children: [
+                Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: [
+                    Stack(
+                      clipBehavior: Clip.none,
+                      children: [
+                        DecoratedBox(
+                          position: DecorationPosition.foreground,
+                          decoration: BoxDecoration(
+                            gradient: LinearGradient(
+                                begin: FractionalOffset.topCenter,
+                                end: FractionalOffset.bottomCenter,
+                                colors: [
+                                  AppColor.transp,
+                                  AppColor.white.withOpacity(1),
+                                ],
+                                stops: const [
+                                  0,
+                                  0.9
+                                ]),
+                          ),
+                          child: widget.mapImage == null
+                              ? Container(
+                                  color: AppColor.purple,
+                                  height: 512,
+                                  width: 512,
+                                )
+                              : Image.network(widget.mapImage.toString()),
+                        ),
+                        Positioned(
+                          left: 25,
+                          child: Container(
+                            child: riversibleAppbar(
+                                'Son Depremler', false, context, 40.0, true),
+                          ),
+                        ),
+                        detailsContainer(),
+                      ],
+                    ),
+                    detailsList(),
+                    SizedBox(
+                      width: MediaQuery.of(context).size.width / 1.9,
+                      height: MediaQuery.of(context).size.height / 16,
+                      child: OutlinedButton(
+                        style: ButtonStyle(
+                          backgroundColor:
+                              MaterialStateProperty.all(AppColor.purple),
+                        ),
+                        child: const Text(
+                          'Konuma Git',
+                          style: TextStyle(
+                              fontFamily: 'Gilroy-ExtraBold',
+                              fontSize: 20,
+                              color: AppColor.white),
+                        ),
+                        onPressed: () {
+                          var latitude = widget.latitude
+                              .toString()
+                              .replaceAll('&deg; N', '');
+                          var longitude = widget.longitude
+                              .toString()
+                              .replaceAll('&deg; E', '');
+                          goLocation(
+                              'https://www.google.com/maps/search/?api=1&query=$latitude,$longitude');
+                          // ScaffoldMessenger.of(context).showSnackBar(
+                          //   SnackBar(
+                          //     content: Text(
+                          //         'Konum: ${widget.latitude}, ${widget.longitude}'),
+                          //   ),
+                          // );
+                          log('https://www.google.com/maps/search/?api=1&query=$latitude,$longitude');
+                        },
+                      ),
+                    )
+                  ],
+                ),
+              ],
+            ),
+          ),
+        ],
+      ),
     );
   }
 

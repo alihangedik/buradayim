@@ -65,7 +65,7 @@ class _SplashState extends State<Splash> {
                       ),
                       Image.asset(
                         'assets/algeware_logo_white.png',
-                        scale: 50,
+                        scale: 10,
                       )
                     ],
                   ),

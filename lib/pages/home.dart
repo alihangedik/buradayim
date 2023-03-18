@@ -43,6 +43,7 @@ class _HomeState extends State<Home> {
     }
   }
 
+  String name = '';
   sendSms() async {
     String currentPosition = await currentLocation();
     log(currentPosition);
@@ -52,7 +53,7 @@ class _HomeState extends State<Home> {
       SmsStatus result = await BackgroundSms.sendMessage(
         phoneNumber: phoneList[i],
         message:
-            '"Alihan Gedik"\n Enkaz altındayım lütfen bana yardım edin.\nAnlık Lokasyonum $currentPosition',
+            '"$name"\n Enkaz altındayım lütfen bana yardım edin.\nAnlık Lokasyonum $currentPosition',
       );
 
       if (result == SmsStatus.sent) {
@@ -240,7 +241,9 @@ class _HomeState extends State<Home> {
                       Navigator.push(
                           context,
                           MaterialPageRoute(
-                            builder: (context) => const Settings(),
+                            builder: (context) => Settings(
+                              name: name,
+                            ),
                           ));
                     }),
                     button(218.0, 'Son Depremler', AppSvg.pulse, () {

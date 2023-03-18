@@ -1,27 +1,35 @@
 import 'package:buradayim/components/riversible_appbar.dart';
 import 'package:buradayim/constant/color.dart';
+import 'package:buradayim/service/storage_service.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 
 import '../constant/svg.dart';
 
 class Settings extends StatefulWidget {
-  const Settings({super.key});
-
+  Settings({super.key, required this.name});
+  String name = '';
   @override
   State<Settings> createState() => _SettingsState();
 }
 
 late TextEditingController tfName;
+StorageService storageService = StorageService();
 
 class _SettingsState extends State<Settings> {
-  String? name = 'İsim Ekle';
-  IconData icon = Icons.help;
   @override
   void initState() {
-    // TODO: implement initState
+    readData();
     super.initState();
     tfName = TextEditingController();
+  }
+
+  Future<void> readData() async {
+    widget.name = await storageService.readData('name');
+  }
+
+  Future<void> saveData() async {
+    await storageService.saveData('name', widget.name);
   }
 
   @override
@@ -37,9 +45,9 @@ class _SettingsState extends State<Settings> {
           Column(
             children: [
               _settingListtile(
-                name!.isEmpty ? 'İsim Ekle' : name!,
+                widget.name,
                 'Gilroy-ExtraBold',
-                icon,
+                Icons.edit,
                 () {
                   showDialog(
                     context: context,
@@ -180,12 +188,17 @@ class _SettingsState extends State<Settings> {
         highlightColor: AppColor.transp,
         onTap: () {
           setState(() {
-            name = tfName.text.toString();
-            if (name!.isNotEmpty) {
-              icon = Icons.edit;
+            saveData();
+            if (tfName.text.isNotEmpty) {
+              widget.name = tfName.text.toString();
             } else {
-              icon = Icons.add_circle;
+              ScaffoldMessenger.of(context).showSnackBar(
+                const SnackBar(
+                  content: Text('Lütfen adını gir.'),
+                ),
+              );
             }
+
             Navigator.pop(context);
           });
         },

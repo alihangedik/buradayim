@@ -1,5 +1,3 @@
-import 'dart:developer';
-
 import 'package:buradayim/components/riversible_appbar.dart';
 import 'package:buradayim/constant/color.dart';
 import 'package:buradayim/constant/svg.dart';
@@ -16,6 +14,9 @@ class NumberAdd extends StatefulWidget {
   @override
   State<NumberAdd> createState() => _NumberAddState();
 }
+
+var nameList = [];
+bool isTap = false;
 
 class _NumberAddState extends State<NumberAdd> {
   StorageService storageService = StorageService();
@@ -35,8 +36,6 @@ class _NumberAddState extends State<NumberAdd> {
     fnPhone = FocusNode();
   }
 
-  var nameList = [];
-
   Future<void> readPhoneData() async {
     for (var element in widget.phoneList) {
       await storageService.readData(element) ?? [];
@@ -54,10 +53,8 @@ class _NumberAddState extends State<NumberAdd> {
   }
 
   Future<void> saveNameData() async {
-    await storageService.saveData('name', tfName.text);
+    await storageService.saveData('name', nameList.toString());
   }
-
-  bool isTap = false;
 
   @override
   Widget build(BuildContext context) {
@@ -167,6 +164,32 @@ class _NumberAddState extends State<NumberAdd> {
   }
 
   Container addButton() {
+    Future<dynamic> _showAlertDialog() {
+      return showDialog(
+        context: context,
+        builder: (context) => AlertDialog(
+          elevation: 0,
+          title: const Center(
+              child:
+                  Icon(Icons.warning_rounded, color: AppColor.grey, size: 35)),
+          content: const Text(
+            'Lütfen geçerli bir numara girin (05xxxxxxxxx)',
+            style: TextStyle(fontFamily: 'Gilroy-ExtraBold'),
+            textAlign: TextAlign.center,
+          ),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.pop(context),
+              child: const Text(
+                'Kapat',
+                style: TextStyle(fontFamily: 'Gilroy-ExtraBold'),
+              ),
+            )
+          ],
+        ),
+      );
+    }
+
     return Container(
       width: double.infinity,
       alignment: Alignment.centerRight,
@@ -176,20 +199,7 @@ class _NumberAddState extends State<NumberAdd> {
         onTap: () async {
           RegExp regExp = RegExp(r'^(05(\d{9}))$');
           if (!regExp.hasMatch(tfPhone.text)) {
-            ScaffoldMessenger.of(context).showSnackBar(
-              const SnackBar(
-                shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.all(Radius.circular(25))),
-                showCloseIcon: true,
-                duration: Duration(seconds: 4),
-                backgroundColor: AppColor.purple,
-                content: Text(
-                  'Lütfen geçerli bir telefon numarası giriniz (05xxxxxxxx)',
-                  style: TextStyle(
-                      fontFamily: 'Gilroy-ExtraBold', color: AppColor.white),
-                ),
-              ),
-            );
+            _showAlertDialog();
             return;
           }
 
