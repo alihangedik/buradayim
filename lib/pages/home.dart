@@ -27,6 +27,7 @@ class Home extends StatefulWidget {
 
 class _HomeState extends State<Home> {
   List<String> phoneList = [];
+  var name = '';
 
   void smsPermission() async {
     var status = await Permission.sms.status;
@@ -43,7 +44,6 @@ class _HomeState extends State<Home> {
     }
   }
 
-  String name = '';
   sendSms() async {
     String currentPosition = await currentLocation();
     log(currentPosition);

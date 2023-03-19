@@ -8,7 +8,7 @@ import '../constant/svg.dart';
 
 class Settings extends StatefulWidget {
   Settings({super.key, required this.name});
-  String name = '';
+  var name = '';
   @override
   State<Settings> createState() => _SettingsState();
 }
@@ -44,8 +44,23 @@ class _SettingsState extends State<Settings> {
           ),
           Column(
             children: [
+              AnimatedContainer(
+                padding: const EdgeInsets.symmetric(horizontal: 40),
+                alignment: Alignment.centerLeft,
+                width: double.infinity,
+                height: widget.name == '' ? 0 : 50,
+                duration: const Duration(milliseconds: 500),
+                curve: Curves.fastOutSlowIn,
+                child: Text(
+                  widget.name,
+                  style: const TextStyle(
+                      fontFamily: 'Gilroy-ExtraBold',
+                      fontSize: 30,
+                      color: AppColor.purple),
+                ),
+              ),
               _settingListtile(
-                widget.name,
+                'İsim Düzenle',
                 'Gilroy-ExtraBold',
                 Icons.edit,
                 () {
@@ -53,13 +68,25 @@ class _SettingsState extends State<Settings> {
                     context: context,
                     builder: (context) => AlertDialog(
                       elevation: 0,
-                      title: const Center(
-                        child: Text(
-                          'Lütfen adını aşağıya gir.',
-                          style: TextStyle(
-                            fontFamily: 'Gilroy-ExtraBold',
-                            fontSize: 15,
-                          ),
+                      title: Center(
+                        child: Column(
+                          children: const [
+                            Text(
+                              'Lütfen adını aşağıya gir.',
+                              style: TextStyle(
+                                fontFamily: 'Gilroy-ExtraBold',
+                                fontSize: 15,
+                              ),
+                            ),
+                            Text(
+                              'Bu isim gönderilen SMS mesajında görünecek ismindir.',
+                              textAlign: TextAlign.center,
+                              style: TextStyle(
+                                fontFamily: 'Gilroy-Light',
+                                fontSize: 12,
+                              ),
+                            )
+                          ],
                         ),
                       ),
                       content: SizedBox(
@@ -186,15 +213,22 @@ class _SettingsState extends State<Settings> {
       child: InkWell(
         splashColor: AppColor.transp,
         highlightColor: AppColor.transp,
-        onTap: () {
+        onTap: () async {
+          saveData();
           setState(() {
-            saveData();
             if (tfName.text.isNotEmpty) {
               widget.name = tfName.text.toString();
             } else {
               ScaffoldMessenger.of(context).showSnackBar(
                 const SnackBar(
-                  content: Text('Lütfen adını gir.'),
+                  backgroundColor: AppColor.purple,
+                  content: Text(
+                    'Lütfen adını gir.',
+                    style: TextStyle(
+                        fontFamily: 'Gilroy-ExtraBold',
+                        fontSize: 15,
+                        color: AppColor.white),
+                  ),
                 ),
               );
             }
