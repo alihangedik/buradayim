@@ -27,7 +27,7 @@ class Home extends StatefulWidget {
 
 class _HomeState extends State<Home> {
   List<String> phoneList = [];
-  var name = '';
+  var name = 'isim alınamadı';
 
   void smsPermission() async {
     var status = await Permission.sms.status;
@@ -39,7 +39,6 @@ class _HomeState extends State<Home> {
     if (status.isGranted) {
       log('SMS izni alındı');
     } else {
-      // İzin verilmediyse, kullanıcıyı uyarmak için bir mesaj gösterin.
       log('SMS izni verilmedi');
     }
   }
@@ -59,9 +58,18 @@ class _HomeState extends State<Home> {
       if (result == SmsStatus.sent) {
         log('gönderildi');
       } else if (result == SmsStatus.failed) {
-        log('hata oluştu');
+        _showErrorDialog();
       }
     }
+  }
+
+  Future<dynamic> _showErrorDialog() {
+    return showDialog(
+        context: context,
+        builder: (context) => const AlertDialog(
+              title: Text('Hata'),
+              content: Text('SMS gönderilemedi'),
+            ));
   }
 
   locationPermission() async {
@@ -146,54 +154,11 @@ class _HomeState extends State<Home> {
                           isTap = !isTap;
                         });
                         smsPermission();
-
-                        showDialog(
-                          context: context,
-                          builder: (context) {
-                            return AlertDialog(
-                              actions: [
-                                TextButton(
-                                  onPressed: () {
-                                    Navigator.pop(context);
-                                  },
-                                  child: const Text('Hayır'),
-                                ),
-                                TextButton(
-                                    style: ButtonStyle(
-                                        backgroundColor:
-                                            MaterialStateProperty.all(
-                                                AppColor.purple)),
-                                    onPressed: () async {
-                                      await sendSms();
-                                      Navigator.push(
-                                          context,
-                                          MaterialPageRoute(
-                                            builder: (context) =>
-                                                const Success(),
-                                          ));
-                                    },
-                                    child: const Text(
-                                      'Evet',
-                                      style: TextStyle(color: AppColor.white),
-                                    ))
-                              ],
-                              //Bir daha gösterme seçeneği eklenecek
-                              icon: const Icon(
-                                Icons.help,
-                                size: 31,
-                              ),
-                              title: const Text('Emin misin?',
-                                  style: TextStyle(
-                                      fontFamily: 'Gilroy-ExtraBold')),
-                              content: const Text(
-                                'Konumunu göndermek istediğinden emin misin?',
-                                style: TextStyle(
-                                    fontFamily: 'Gilroy-Light', fontSize: 14),
-                                textAlign: TextAlign.center,
-                              ),
-                            );
-                          },
-                        );
+                        if (phoneList.isEmpty) {
+                          _showUnknowDialog(context);
+                        } else {
+                          _showDialog(context);
+                        }
                       },
                       child: AnimatedContainer(
                         curve: Curves.fastOutSlowIn,
@@ -260,6 +225,52 @@ class _HomeState extends State<Home> {
           ),
         ],
       ),
+    );
+  }
+
+  Future<dynamic> _showDialog(BuildContext context) {
+    return showDialog(
+      context: context,
+      builder: (context) {
+        return AlertDialog(
+          actions: [
+            TextButton(
+              onPressed: () {
+                Navigator.pop(context);
+              },
+              child: const Text('Hayır'),
+            ),
+            TextButton(
+                style: ButtonStyle(
+                    backgroundColor:
+                        MaterialStateProperty.all(AppColor.purple)),
+                onPressed: () async {
+                  await sendSms();
+                  Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => const Success(),
+                      ));
+                },
+                child: const Text(
+                  'Evet',
+                  style: TextStyle(color: AppColor.white),
+                ))
+          ],
+          //Bir daha gösterme seçeneği eklenecek
+          icon: const Icon(
+            Icons.help,
+            size: 31,
+          ),
+          title: const Text('Emin misin?',
+              style: TextStyle(fontFamily: 'Gilroy-ExtraBold')),
+          content: const Text(
+            'Konumunu göndermek istediğinden emin misin?',
+            style: TextStyle(fontFamily: 'Gilroy-Light', fontSize: 14),
+            textAlign: TextAlign.center,
+          ),
+        );
+      },
     );
   }
 

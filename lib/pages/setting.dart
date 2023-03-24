@@ -8,13 +8,13 @@ import '../constant/svg.dart';
 
 class Settings extends StatefulWidget {
   Settings({super.key, required this.name});
-  var name = '';
+  var name;
   @override
   State<Settings> createState() => _SettingsState();
 }
 
 late TextEditingController tfName;
-StorageService storageService = StorageService();
+late StorageService storageService;
 
 class _SettingsState extends State<Settings> {
   @override
@@ -22,6 +22,7 @@ class _SettingsState extends State<Settings> {
     readData();
     super.initState();
     tfName = TextEditingController();
+    storageService = StorageService();
   }
 
   Future<void> readData() async {
@@ -29,7 +30,7 @@ class _SettingsState extends State<Settings> {
   }
 
   Future<void> saveData() async {
-    await storageService.saveData('name', widget.name);
+    await storageService.saveData('name', widget.name.toString());
   }
 
   @override
@@ -38,7 +39,8 @@ class _SettingsState extends State<Settings> {
       children: [
         Scaffold(
             body: Column(children: [
-          riversibleAppbar('Ayarlar', false, context, 40.0, false),
+          riversibleAppbar(
+              'Ayarlar', false, context, 40.0, AppColor.purple, AppColor.white),
           const SizedBox(
             height: 50,
           ),
@@ -213,8 +215,7 @@ class _SettingsState extends State<Settings> {
       child: InkWell(
         splashColor: AppColor.transp,
         highlightColor: AppColor.transp,
-        onTap: () async {
-          saveData();
+        onTap: () {
           setState(() {
             if (tfName.text.isNotEmpty) {
               widget.name = tfName.text.toString();
@@ -232,6 +233,7 @@ class _SettingsState extends State<Settings> {
                 ),
               );
             }
+            saveData();
 
             Navigator.pop(context);
           });

@@ -78,7 +78,8 @@ class _NumberAddState extends State<NumberAdd> {
             body: Column(
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [
-                riversibleAppbar('Numara Ekle', false, context, 40.0, false),
+                riversibleAppbar('Numara Ekle', false, context, 40.0,
+                    AppColor.purple, AppColor.white),
                 textfields(),
                 tfWrap(
                   context,

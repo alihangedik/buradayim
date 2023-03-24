@@ -4,7 +4,14 @@ import 'package:flutter_svg/svg.dart';
 import '../constant/color.dart';
 import '../constant/svg.dart';
 
-Padding riversibleAppbar(title, iconVisible, context, top, bool isShadow) {
+Padding riversibleAppbar(
+  String title,
+  bool iconVisible,
+  BuildContext context,
+  double top,
+  Color? backgroundColor,
+  Color? textColor,
+) {
   return Padding(
     padding: EdgeInsets.only(top: top),
     child: Wrap(
@@ -39,24 +46,11 @@ Padding riversibleAppbar(title, iconVisible, context, top, bool isShadow) {
               padding: const EdgeInsets.only(
                 left: 20.0,
               ),
-              child: Container(
-                decoration: BoxDecoration(
-                  boxShadow: [
-                    isShadow == true
-                        ? const BoxShadow(
-                            color: AppColor.grey,
-                            blurRadius: 50,
-                            spreadRadius: 1)
-                        : const BoxShadow(
-                            color: AppColor.transp,
-                            blurRadius: 0,
-                            spreadRadius: 0)
-                  ],
-                ),
+              child: SizedBox(
                 width: 30,
                 child: SvgPicture.string(
                   AppSvg.buradayimLogo,
-                  color: AppColor.white,
+                  color: textColor,
                 ),
               ),
             ),
@@ -71,7 +65,7 @@ Padding riversibleAppbar(title, iconVisible, context, top, bool isShadow) {
                       color: AppColor.white,
                     ))
                 : const SizedBox.shrink(),
-            tileColor: AppColor.purple,
+            tileColor: backgroundColor,
             shape: const RoundedRectangleBorder(
               borderRadius: BorderRadius.all(
                 Radius.circular(25),
@@ -80,19 +74,8 @@ Padding riversibleAppbar(title, iconVisible, context, top, bool isShadow) {
             title: Text(
               title,
               style: TextStyle(
-                  shadows: [
-                    isShadow == true
-                        ? const BoxShadow(
-                            color: AppColor.grey,
-                            blurRadius: 50,
-                            spreadRadius: 50)
-                        : const BoxShadow(
-                            color: AppColor.white,
-                            blurRadius: 0,
-                            spreadRadius: 0)
-                  ],
                   fontFamily: 'Gilroy-ExtraBold',
-                  color: AppColor.white,
+                  color: textColor,
                   fontSize: 20),
             ),
           ),

@@ -61,7 +61,8 @@ class _EarthquakeState extends State<Earthquake> {
     return Scaffold(
       body: Column(
         children: [
-          riversibleAppbar('Son Depremler', false, context, 40.0, false),
+          riversibleAppbar('Son Depremler', false, context, 40.0,
+              AppColor.purple, AppColor.white),
           infoText(),
           futureBuilder(context)
         ],
@@ -160,7 +161,6 @@ class _EarthquakeState extends State<Earthquake> {
                         magnitudeType: data[index].magnitudeType,
                         latitude: data[index].latitude,
                         longitude: data[index].longitude,
-                        mapImage: data[index].mapImage,
                         data: data[index]),
                   ));
             },
