@@ -241,8 +241,6 @@ class _HomeState extends State<Home> {
               child: const Text('Hayır'),
             ),
             TextButton(
-                child: const Text(
-                  'Evet',
               style: ButtonStyle(
                   backgroundColor: MaterialStateProperty.all(AppColor.purple)),
               onPressed: () async {
