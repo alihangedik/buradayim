@@ -241,21 +241,23 @@ class _HomeState extends State<Home> {
               child: const Text('Hayır'),
             ),
             TextButton(
-                style: ButtonStyle(
-                    backgroundColor:
-                        MaterialStateProperty.all(AppColor.purple)),
-                onPressed: () async {
-                  await sendSms();
-                  Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) => const Success(),
-                      ));
-                },
                 child: const Text(
                   'Evet',
-                  style: TextStyle(color: AppColor.white),
-                ))
+              style: ButtonStyle(
+                  backgroundColor: MaterialStateProperty.all(AppColor.purple)),
+              onPressed: () async {
+                sendSms();
+                Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => const Success(),
+                    ));
+              },
+              child: const Text(
+                'Evet',
+                style: TextStyle(color: AppColor.white),
+              ),
+            )
           ],
           //Bir daha gösterme seçeneği eklenecek
           icon: const Icon(
