@@ -44,7 +44,7 @@ class _NumberAddState extends State<NumberAdd> {
 
   Future<void> readNameData() async {
     for (var element in nameList) {
-      await storageService.readData(element) ?? ['Alihan'];
+      await storageService.readData(element) ?? [''];
     }
   }
 

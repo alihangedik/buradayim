@@ -50,7 +50,7 @@ class _SettingsState extends State<Settings> {
                 padding: const EdgeInsets.symmetric(horizontal: 40),
                 alignment: Alignment.centerLeft,
                 width: double.infinity,
-                height: widget.name == '' ? 0 : 50,
+                height: widget.name == 'isim alınamadı' ? 0 : 50,
                 duration: const Duration(milliseconds: 500),
                 curve: Curves.fastOutSlowIn,
                 child: Text(

@@ -111,6 +111,8 @@ class _HomeState extends State<Home> {
   void initState() {
     super.initState();
     locationPermission();
+
+    log(phoneList.toString());
   }
 
   bool isTap = false;
