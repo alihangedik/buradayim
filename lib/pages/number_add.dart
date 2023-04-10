@@ -219,8 +219,8 @@ class _NumberAddState extends State<NumberAdd> {
             nameList.add(tfName.text);
             setState(() {});
           }
-          savePhoneData();
-          saveNameData();
+          await savePhoneData();
+          await saveNameData();
           tfName.text = '';
           tfPhone.text = '';
           fnName.unfocus();

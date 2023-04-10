@@ -1,20 +1,15 @@
 import 'dart:developer';
-
 import 'package:buradayim/pages/setting.dart';
 import 'package:geocoding/geocoding.dart';
 import 'package:geolocator/geolocator.dart';
-
 import 'package:background_sms/background_sms.dart';
 import 'package:buradayim/constant/color.dart';
 import 'package:buradayim/constant/svg.dart';
 import 'package:buradayim/pages/earthquake.dart';
 import 'package:buradayim/pages/success.dart';
-
 import 'package:flutter/material.dart';
-
 import 'package:flutter_svg/svg.dart';
 import 'package:permission_handler/permission_handler.dart';
-
 import '../components/appbar.dart';
 import 'number_add.dart';
 
@@ -27,7 +22,7 @@ class Home extends StatefulWidget {
 
 class _HomeState extends State<Home> {
   List<String> phoneList = [];
-  var name = 'isim alınamadı';
+  var name = 'İsim alınamadı';
 
   void smsPermission() async {
     var status = await Permission.sms.status;
